@@ -189,7 +189,7 @@ body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
     <div class="mode-grid">
       <button class="mode-card" id="classicMode"><span class="mode-icon">🎮</span><span><strong>ゴミ分別ゲーム</strong><small>出てきたごみを、正しい分別先へドラッグして挑戦。</small></span></button>
       <button class="mode-card" id="photoMode"><span class="mode-icon">🔎</span><span><strong>分別を調べる</strong><small>品目名で検索して、地域のルールを確認。写真は補助として使えます。</small></span></button>
-      <button class="mode-card" id="roadMode"><span class="mode-icon">🧭</span><span><strong>分別ナビ</strong><small>「何でできている？」など大きなくくりから質問して、だんだん絞り込みます。</small></span></button>
+      <button class="mode-card" id="roadMode"><span class="mode-icon">🧭</span><span><strong>分別さがしナビ</strong><small>「何でできている？」など大きなくくりから質問して、だんだん絞り込みます。</small></span></button>
       <button class="mode-card" id="notesMode"><span class="mode-icon">📒</span><span><strong>まちがいノート</strong><small>自分のまちがいをこの端末に記録して、苦手な品目だけ復習できます。</small></span></button>
     </div>
     <div class="row"><label for="citySelMenu"><b>地域</b></label><select id="citySelMenu" aria-label="地域"></select><button class="btn ghost" id="editBtnMenu">この地域を編集</button><button class="btn ghost" id="addBtnMenu">＋ 新しい市区町村を追加</button></div>
@@ -207,11 +207,16 @@ body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
     <div id="photoResult" class="result-panel" hidden aria-live="polite"></div>
     <p class="sub" id="photoCount"></p>
     <div id="photoList" class="slist"></div>
+    <details class="photo-aux"><summary>📷 写真でさがす（補助機能）</summary>
+      <p class="sub">写真は検索の補助です。選んだ写真は画面に表示されるだけで、端末の外へは送信されません。見ながら、上の検索窓で品目を探してください。</p>
+      <input type="file" id="photoFile" accept="image/*" aria-label="ごみの写真を選択">
+      <img id="photoPreview" class="photo-preview" alt="選択したごみの写真" hidden>
+    </details>
     <div class="center"><button class="btn ghost" id="photoRoad">🧭 ナビで絞り込む</button> <button class="btn ghost" id="photoBack">モード選択へ戻る</button></div>
   </section>
 
   <section id="roadmap" hidden>
-    <h1>🧭 分別ナビ</h1>
+    <h1>🧭 分別さがしナビ</h1>
     <p class="sub" id="roadProgress"></p>
     <div class="road-trail" id="roadTrail"></div>
     <div class="road-question" id="roadBox"><h2 id="roadQuestion"></h2><div class="road-opts" id="roadOpts"></div></div>
@@ -1285,7 +1290,7 @@ function fillPhotoItems(){
   $("photoRecent").innerHTML=rc.length?'<span class="sub">最近調べたもの：</span>'+rc.map(function(it){return '<button class="chip" data-i="'+it.id+'">'+it.e+' '+esc(it.n)+'</button>'}).join(""):"";
   Array.prototype.forEach.call($("photoRecent").querySelectorAll("button"),function(b){b.onclick=function(){showPhoto(b.dataset.i)}});
   $("photoCount").textContent=list.length+"件"+(k?"（検索結果）":"");
-  box.innerHTML=list.length?list.map(function(o){var it=o.it,bad=unv(ct,it);return '<button class="srow" data-i="'+it.id+'"><span class="ico">'+it.e+'</span><span>'+esc(it.n)+(bad?' <small>（未確認）</small>':'')+'</span><span class="pill">'+esc(cn(ct,itemCat(ct,it)))+'</span></button>'}).join(""):'<div class="empty"><p>見つかりませんでした。ひらがな・カタカナ・別の言い方でも試してみてください。</p><button class="btn ghost" id="toRoad">🧭 分別ナビで絞り込む</button></div>';
+  box.innerHTML=list.length?list.map(function(o){var it=o.it,bad=unv(ct,it);return '<button class="srow" data-i="'+it.id+'"><span class="ico">'+it.e+'</span><span>'+esc(it.n)+(bad?' <small>（未確認）</small>':'')+'</span><span class="pill">'+esc(cn(ct,itemCat(ct,it)))+'</span></button>'}).join(""):'<div class="empty"><p>見つかりませんでした。ひらがな・カタカナ・別の言い方でも試してみてください。</p><button class="btn ghost" id="toRoad">🧭 分別さがしナビで絞り込む</button></div>';
   Array.prototype.forEach.call(box.querySelectorAll(".srow"),function(b){b.onclick=function(){showPhoto(b.dataset.i)}});
   var tr=$("toRoad");if(tr)tr.onclick=startRoadmap;
   if(k&&list.length===1&&list[0].sc>=2)showPhoto(list[0].it.id,true);else if(!sLast)$("photoResult").hidden=true;
@@ -1296,7 +1301,7 @@ $("photoFile").onchange=function(){var f=this.files&&this.files[0];if(!f)return;
 $("photoRoad").onclick=startRoadmap;
 $("photoBack").onclick=showMenu;
 
-/* 分別ナビ：大きなくくり → だんだん具体的に絞り込む */
+/* 分別さがしナビ：大きなくくり → だんだん具体的に絞り込む */
 var ROAD={
  start:{q:"それは、何でできていますか？（いちばん近いものを選んでください）",o:[
   ["🍌","食べ物・生きもの（皮・かす・骨など）","L:food"],
