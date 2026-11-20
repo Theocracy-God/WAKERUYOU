@@ -179,6 +179,20 @@ body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
 .nrow{display:grid;gap:2px;padding:10px 0;border-bottom:1px solid var(--line)}
 .nrow .nh{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .nrow small{color:var(--sub)}
+.recy{margin-top:8px;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--ok) 14%,var(--surface));border:1px solid var(--ok);font-size:.9rem;line-height:1.5}
+.recy.nr{background:var(--surface);border-color:var(--line)}
+.recy small{color:var(--sub)}
+.steps{background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:8px 10px;margin:10px 0;text-align:center;font-weight:700;font-size:.9rem}
+.bookcard{background:var(--surface);border:1px solid var(--line);border-left:8px solid var(--col);border-radius:10px;padding:10px 12px;margin:10px 0}
+.bookcard h3{margin:0 0 4px;font-size:1.05rem}.bookcard .ex{font-size:1.5rem;margin:4px 0}.bookcard p{margin:4px 0;font-size:.92rem}
+.rcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;text-align:center;margin:10px 0}
+.rcard .emoji{font-size:4.2rem;line-height:1.1}
+.road-opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--surface))}
+.road-opt.wrong{border-color:var(--ng);background:color-mix(in srgb,var(--ng) 14%,var(--surface))}
+.resb{position:absolute;top:3px;right:5px;font-style:normal;font-size:.8rem;line-height:1}
+.stage:not(.ring) .basket{position:relative}
+.recy div{margin-top:6px}
+.peekrow small{color:var(--sub)}
 </style>
 </head>
 <body>
@@ -279,6 +293,7 @@ body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
     <div class="stars" id="stars" aria-hidden="true"></div>
     <p id="rank"></p>
     <div class="stats" id="stats"></div>
+    <div id="recapRes" hidden></div>
     <div id="missWrap" hidden><p class="sub">まちがえたゴミ</p><ul class="miss" id="miss"></ul></div>
     <div class="endbtns"><button class="btn" id="again">もう一度あそぶ</button> <button class="btn" id="retryMiss" hidden>まちがえたものだけ復習</button> <button class="btn ghost" id="home">モード選択へ</button></div>
   </section>
@@ -356,7 +371,7 @@ var EXT=["wood","yogurt","tray","bag","detergent","foam","notebook","paperbox","
 var CITIES={
  generic:{useBase:1,name:"一般的な区分",cats:["burn","nonburn","plastic","bottle","paper"],names:{},over:{},notes:{},
   tips:"分別ルールは自治体ごとに違います。ここでは一般的な区分で出題しています。",disc:""},
- yokohama:{useBase:1,src:"https://www.city.yokohama.lg.jp/kurashi/sumai-kurashi/gomi-recycle/ongen/pamphlet/wakedashi.files/gaiyou2025.4.pdf",name:"横浜市",cats:["burn","nonburn","plastic","bottle","metal","paper"],names:{paper:"古紙・古布"},
+ yokohama:{useBase:1,pref:"神奈川県",src:"https://www.city.yokohama.lg.jp/kurashi/sumai-kurashi/gomi-recycle/ongen/pamphlet/wakedashi.files/gaiyou2025.4.pdf",name:"横浜市",cats:["burn","nonburn","plastic","bottle","metal","paper"],names:{paper:"古紙・古布"},
   over:{umb:"metal",pan:"metal"},
   notes:{
    umb:"傘は骨組（小さな金属類）と布（燃やすごみ）に分けて出します。",
@@ -1174,7 +1189,111 @@ var CITIES={
   },
   tips:"・燃えるごみ・燃えないごみ・プラスチックごみは、市の指定収集袋で。午前8時までに\n・びん・ガラス類・陶磁器類・缶・ペットボトルは資源回収ステーション（カゴ）へ。袋は使わない\n・スプレー缶・カセットボンベ・ライターは、必ず月1回の有害物の日に\n・古紙（新聞・ダンボール・雑がみ）は戸別回収",
   disc:"稲城市の公式サイトの案内をもとにしています（一部はまとめサイトで補足）。ガラス・陶磁器類は資源の扱い（びんの日）です。他の市と違うので注意してください。",
-  src:"https://www.city.inagi.tokyo.jp/kurashi/gomi/1005088/1013825.html"}
+  src:"https://www.city.inagi.tokyo.jp/kurashi/gomi/1005088/1013825.html"},
+ mizuhomachi:{name:"瑞穂町",cats:["burn","nonburn","plastic","glass","can","pet","paper"],
+  names:{burn:"燃やせるごみ",nonburn:"燃やせないごみ",plastic:"容器包装プラスチック",glass:"ビン",can:"カン",paper:"紙類"},
+  subs:{burn:"生ごみ・汚れた紙・アルミがはってある紙・ラップ・アルミホイルなど",nonburn:"陶磁器・一辺50cm未満の小型家電・プラマークのないプラ製品など",plastic:"プラマークの付いた容器包装（洗って乾かす）"},
+  over:{jar:"glass",can:"can",pet:"pet"},skip:["diaper","hashi","bulb","umb","pan","label","foam","toy"],
+  notes:{
+   tissue:"紙コップ・ティッシュペーパー・油が付いた紙など汚れた紙は燃やせるごみです。",pizza:"紙コップ・ティッシュペーパー・油が付いた紙など汚れた紙は燃やせるごみです。",
+   dish:"陶磁器は燃やせないごみです。",shampoo:"プラマークの付いたボトルは容器包装プラスチック。キャップやノズルは外して、水で洗い流します。",
+   bento:"洗っても汚れが落ちないものは、燃やせるごみとして出します。",snack:"プラマークの付いた袋は、容器包装プラスチックです。",
+   cap:"キャップやノズルは外して、容器包装プラスチックとして出します。",milk:"アルミがはってある紙パックは燃やせるごみです。"
+  },
+  tips:"・燃やせるごみ・燃やせないごみは指定収集袋、容器包装プラスチックは透明・半透明の袋（レジ袋可）で出す\n・50cm以上のものは50cm以下に切る（一辺50cm以上は粗大ごみ）\n・容器包装プラスチックは水で洗い、乾かして、キャップやノズルを外す\n・風の強い日は飛散防止の重しやネットを使う",
+  disc:"瑞穂町の公式サイトの案内と、まとめサイトの情報をもとにしています。確認できなかったゴミは出題から外しています。",
+  src:"https://www.town.mizuho.tokyo.jp/kurashi/005/004/p000620.html"},
+ hinode:{name:"日の出町",cats:["burn","nonburn","glass","can","pet","paper"],
+  names:{burn:"可燃ごみ",nonburn:"不燃ごみ",glass:"びん類",can:"缶・金属類",paper:"資源A（紙・布）"},
+  subs:{burn:"生ごみ・資源にならない紙・プラスチック類・皮革・おむつなど",nonburn:"鏡・板ガラス・器・コップ・電球など",can:"空き缶・なべ・やかん・フライパンなど（資源B）",glass:"飲料・調味料・化粧品のびん・割れたびん（資源B）"},
+  over:{shampoo:"burn",bento:"burn",snack:"burn",pan:"can",jar:"glass",can:"can",pet:"pet"},skip:["hashi","pizza","umb","cap","label","milk","toy","foam"],
+  notes:{
+   tissue:"資源にならない紙は可燃ごみです。",diaper:"おむつは可燃ごみです。",
+   shampoo:"日の出町では、プラスチック類は可燃ごみです（ペットボトルと白色トレイは別）。",bento:"日の出町では、プラスチック類は可燃ごみです（ペットボトルと白色トレイは別）。",snack:"日の出町では、プラスチック類は可燃ごみです（ペットボトルと白色トレイは別）。",
+   dish:"鏡・板ガラス・器・コップ・クリスタルガラスなどは不燃ごみです。割れたものは危険のないように出します。",
+   bulb:"電球（豆電球を含む）は不燃ごみです。割れている場合は厚紙などに包んで出します。",
+   pan:"なべ・やかん・フライパンは資源B（缶・金属類）です。金属以外の部分はできるだけ取り除きます。",
+   jar:"びんは中身を出して洗い、ふたは外して「可燃ごみ」で出します。割れたびんも「びん類」です。",
+   can:"缶は中身を出し、水で軽くすすいで出します。缶・金属類とびん類は別々の容器に入れます。",
+   pet:"キャップとラベルを外し、水で中をすすぎ、水を切ってつぶします。"
+  },
+  tips:"・可燃ごみ・不燃ごみは、町指定の専用袋で出す（可燃は黄色、不燃は水色）\n・資源B（缶・金属類とびん類）は別々の容器で。汚れたびん・缶は資源になりません\n・びんのふたは可燃ごみで出す\n・朝8時までに集積所へ出す",
+  disc:"日の出町の公式サイトの分別辞典・案内（一部に令和2年版を含む）をもとにしています。プラスチック類が可燃ごみなど、他の市区と違う点が多いので注意してください。",
+  src:"https://www.town.hinode.tokyo.jp/module/garbage.php"},
+ kawasaki:{name:"川崎市",pref:"神奈川県",cats:["burn","plastic","metal","can","glass"],
+  names:{burn:"普通ごみ",plastic:"プラスチック資源",metal:"小物金属",can:"空き缶・ペットボトル",glass:"空きびん"},
+  subs:{burn:"生ごみ・衣類・割れ物・蛍光管や電球・汚れが落ちないプラなど",plastic:"プラ容器包装と、プラだけでできた50cm未満の製品",metal:"鍋・フライパン・傘・針金ハンガーなど（30cm未満）",can:"飲料缶・菓子缶・スプレー缶と、ペットボトルの本体"},
+  over:{pet:"can",dish:"burn",vase:"burn",glasscup:"burn",cup:"burn",bulb:"burn",umb:"metal",pan:"metal",hanger:"metal",toy:"plastic",foam:"plastic"},
+  skip:["tissue","diaper","hashi","pizza","news","box","mag","milk"],
+  notes:{
+   dish:"割れ物は、ふた付きポリ容器か透明・半透明の袋に入れて、普通ごみで出します。",vase:"割れ物は、ふた付きポリ容器か透明・半透明の袋に入れて、普通ごみで出します。",
+   glasscup:"割れ物は、ふた付きポリ容器か透明・半透明の袋に入れて、普通ごみで出します。",cup:"割れ物は、ふた付きポリ容器か透明・半透明の袋に入れて、普通ごみで出します。",
+   bulb:"蛍光管や電球は普通ごみです。厚紙で包んで出すと安全です。",umb:"傘は小物金属です。袋に入れず、そのまま出します（30cmを超えてもOK）。",
+   pan:"鍋・フライパン・やかんは、柄などを除いて30cm未満なら小物金属です。それ以上は粗大ごみです。",hanger:"針金ハンガーは小物金属です（30cmを超えてもOK）。",
+   shampoo:"洗剤ボトルなどは、中身を使い切り、軽く洗ってプラスチック資源へ。",bento:"汚れが落ちないものは、普通ごみです。",
+   cap:"ペットボトルのキャップとラベルは、取り外してプラスチック資源へ。",label:"ペットボトルのキャップとラベルは、取り外してプラスチック資源へ。",
+   foam:"発泡スチロールはプラスチック資源です。",toy:"プラスチックだけでできた50cm未満の製品（歯ブラシ・文具・小玩具など）は、プラスチック資源です。",
+   pet:"ペットボトルの本体は、空き缶と一緒に透明・半透明の袋に入れます。ソースや食用油のボトルは普通ごみです。",
+   can:"缶は中をすすぎ、ペットボトルと一緒に透明・半透明の袋に入れて出します。",
+   jar:"びんはキャップを外して中をすすぎ、袋に入れず専用のかごへ。金属キャップは空き缶、プラスチックキャップはプラスチック資源へ。"
+  },
+  tips:"・普通ごみ（週2回）は、ふた付きポリ容器か透明・半透明の袋で。指定袋はない\n・資源物は週1回、朝8時までに集積所へ（空き缶・ペットボトルは同じ袋に）\n・小物金属は月2回、袋に入れずそのまま出す\n・令和8年4月から、プラスチック資源の収集が全市に拡大",
+  disc:"川崎市の公式サイトの案内（ごみの分別に迷ったら）と、まとめサイトの情報をもとにしています。古紙の区分は資料で確認できなかったため、紙類は出題から外しています。",
+  src:"https://www.city.kawasaki.jp/kurashi/category/261-1-10-2-0-0-0-0-0-0.html"},
+ saitama:{name:"さいたま市",pref:"埼玉県",cats:["burn","nonburn","plastic","glass","can","pet","paper"],
+  names:{burn:"もえるごみ",nonburn:"もえないごみ",plastic:"プラスチック資源",glass:"びん",can:"かん",paper:"古紙類"},
+  subs:{burn:"食品くず・革製品・木の枝・汚れが落ちないプラなど",nonburn:"せともの・ガラスのコップ・鍋・やかん・フライパン・電球など",plastic:"プラマークの容器包装と、30cm未満のプラ製品（令和8年10月から）",paper:"新聞・段ボール・牛乳パック・雑誌類・その他の紙"},
+  over:{foam:"plastic",jar:"glass",can:"can",pet:"pet"},skip:["tissue","hashi","pizza","umb","cap","toy"],
+  notes:{
+   diaper:"紙おむつは汚物を取り除いて、もえるごみへ。",dish:"せともの・ガラスのコップは、もえないごみです。",bulb:"電球は、もえないごみです（蛍光管は有害危険ごみ）。",pan:"鍋・やかん・フライパンは、もえないごみです。",
+   shampoo:"すべてプラスチックでできていて、一番長い辺が30cm未満、軽くすすいで汚れが落ちるものは、プラスチック資源です（令和8年10月から）。",
+   bento:"食品残渣は水洗いし、汚れが落ちないものは、もえるごみです。",label:"はがしたペットボトルのラベルは、プラスチック資源です。",
+   foam:"発泡スチロール類は、プラスチック資源（透明袋）。トレイはスーパーの回収ボックスも使えます。",
+   pet:"キャップとラベルを外し、軽くすすいで、透明袋に入れます。ラベルはなるべくはがします。",
+   jar:"びんは中を洗い、キャップを外して、黄色のコンテナへ。割れたびん・食用油や薬品のびんは、もえないごみです。",can:"缶は中を軽くすすぎます。",
+   milk:"牛乳パックは開いて、洗って、乾燥させます。"
+  },
+  tips:"・もえるごみは半透明袋でも可。もえないごみ・資源物1類（びん・かん・ペットボトル・プラスチック資源）は透明袋のみ\n・プラスチック資源は令和8年10月から、容器包装に加え、プラマークのない30cm未満のプラスチック製品も出せる（軽くすすいで汚れが落ちるもの）\n・古紙類は種類ごとにひもで十字にしばる（その他の紙は紙袋でも可）\n・収集日の朝8時30分までに収集所へ",
+  disc:"さいたま市の公式サイトと、まとめサイトの情報をもとにしています（令和8年10月からの新しいプラスチック資源の区分を反映）。区により細部が違う可能性があります。確認できなかったゴミは出題から外しています。",
+  src:"https://www.city.saitama.lg.jp/001/006/010/003/p114277.html"},
+ chiba:{name:"千葉市",pref:"千葉県",cats:["burn","nonburn","glass","can","pet","paper"],
+  names:{burn:"可燃ごみ",nonburn:"不燃ごみ",glass:"びん",can:"缶",paper:"古紙"},
+  subs:{burn:"生ごみ・やわらかいプラスチック類（洗剤ボトル・袋・トレー・発泡スチロール）・皮革・ゴム・再生できない紙など",nonburn:"硬いプラスチック・金属類・ガラス・せともの・傘・電球など"},
+  over:{shampoo:"burn",snack:"burn",cap:"burn",label:"burn",foam:"burn",bag:"burn",tray:"burn",jar:"glass",can:"can",pet:"pet"},
+  skip:["diaper","hashi","pizza","bento","yogurt","toy","mag","hanger"],
+  notes:{
+   tissue:"再生利用できない紙類（紙コップ・紙皿など）は可燃ごみです。",
+   shampoo:"洗剤・シャンプーのボトルは、やわらかいプラスチック類として可燃ごみです。",snack:"お菓子の包装・袋（プラスチック製）は可燃ごみです。",
+   cap:"ペットボトルのキャップは、区役所等の回収拠点がありますが、持ち込みが難しい場合は可燃ごみです。",label:"ペットボトルのラベルは可燃ごみです。",
+   foam:"発泡スチロールは可燃ごみです。",bag:"レジ袋は可燃ごみです。",tray:"食品用トレイは可燃ごみ。できるだけ店頭回収協力店へ。",
+   dish:"ガラス・せともの類は不燃ごみ。刃物や割れたガラスは、紙に包んで「危険」と表示します。",vase:"花瓶・植木鉢などのせともの類は不燃ごみです。",glasscup:"コップはガラス・せともの類として不燃ごみです。",
+   bulb:"白熱電球・LED電球は不燃ごみです。",umb:"傘は不燃ごみ。10Lか20Lの不燃ごみ指定袋に入れ、はみ出しても出せます（何本でも可）。",pan:"フライパンは不燃ごみです。",
+   pet:"ラベルとキャップを外し、中をすすいで、つぶして、緑色のネットへ。",can:"缶（飲食用）は水ですすいで、青色のコンテナへ。",
+   jar:"びんは水ですすいで、コンテナへ。一升びんの金属製のふたは缶、プラスチック製のふたは可燃ごみです。",
+   milk:"飲料パックは、内側がコーティングされていないもののみ古紙。500mL未満やアルミコーティングのものは可燃ごみです。"
+  },
+  tips:"・可燃ごみ（週2回）・不燃ごみは千葉市の指定袋（有料）\n・びん・缶・ペットボトルは週1回、コンテナ・ネットに直接入れる（レジ袋には入れない）\n・やわらかいプラスチックは可燃ごみ、手で曲げると割れる硬いプラスチックは不燃ごみ\n・スプレー缶・ライター・乾電池は有害ごみ（種類ごとに透明袋で）",
+  disc:"千葉市の公式のごみ分別50音一覧・分け方ページをもとにしています。プラスチックを資源として集めない市なので、他の市と区分が違います。確認できなかったゴミは出題から外しています。",
+  src:"https://www.city.chiba.jp/kankyo/junkan/shushugyomu/kanengomi.html"},
+ sagamihara:{name:"相模原市",pref:"神奈川県",cats:["burn","plastic","metal","glass","can","pet","paper"],
+  names:{burn:"燃やすしかないごみ（一般ごみ）",plastic:"プラスチック",metal:"金物類",glass:"びん類",can:"かん類",pet:"ペットボトル（有害ごみの日）",paper:"紙類（資源）"},
+  subs:{burn:"生ごみ・汚れた紙・陶磁器・ガラス食器・電球・刃物・50cm未満のプラ製品など",plastic:"プラマークの容器包装と、50cm未満・厚さ5mm未満のプラ製品",metal:"傘など（布やビニールを外す）"},
+  over:{dish:"burn",vase:"burn",glasscup:"burn",bulb:"burn",umb:"metal"},
+  skip:["tissue","diaper","hashi","pizza","pan","hanger","toy","yogurt","cup"],
+  notes:{
+   dish:"陶磁器・ガラス食器は一般ごみ。危なくないよう新聞紙や厚紙に包み、陶器が入っていることを表示します。",vase:"陶磁器・植木鉢は一般ごみ。危なくないよう新聞紙や厚紙に包んで出します。",glasscup:"ガラス食器・耐熱ガラスは、びん類ではなく一般ごみです。",
+   bulb:"電球は一般ごみです。",umb:"傘は、布やビニールを取り外し（燃やすしかないごみへ）、骨組みが開かないようにひもでしばって、透明・半透明の袋に入れて金物類に出します。",
+   shampoo:"プラマークの付いた容器は、プラスチック。水ですすぐか拭き取って汚れを取ります。汚れや臭いが取れないものは燃やすしかないごみです。",
+   bento:"水ですすぐか拭き取って汚れを取ります。汚れや臭いが取れないものは燃やすしかないごみです。",snack:"水ですすぐか拭き取って汚れを取ります。汚れや臭いが取れないものは燃やすしかないごみです。",
+   cap:"外したペットボトルのキャップ・ラベルは、プラスチックへ。",label:"外したペットボトルのキャップ・ラベルは、プラスチックへ。",
+   foam:"発泡スチロールは、できるだけ細かく砕いてプラスチックへ。汚れが落ちないものは一般ごみです。",bag:"レジ袋はプラスチックです。",tray:"食品トレーはプラスチックです。",detergent:"洗剤ボトルはプラスチックです。",
+   pet:"ペットボトルはプラスチックの日に出しません（ペットボトル・有害ごみの日へ）。洗って乾かし、つぶします。",
+   jar:"びんは中を洗い、ふたを外して透明・半透明の袋へ。金属のふたはかん類、プラスチックのふたはプラスチック、コルクは燃やすしかないごみです。乳白色の化粧品びん・割れたびん・ガラス食器・耐熱ガラスは対象外です。",
+   can:"缶類は中を洗って、できるだけつぶし、透明・半透明の袋へ。",milk:"紙パック（紙マークがあるもの）は紙類です。ひもでしばるか、紙袋に入れてひもでしばります。"
+  },
+  tips:"・燃やすしかないごみ（一般ごみ）は週2回。中身の見える透明・半透明の袋（レジ袋可）で、片手で持てる量にして口を縛る\n・プラスチックは週1回。プラマークの容器包装と、50cm未満・厚さ5mm未満のプラ製品を同じ袋に\n・ペットボトルはプラスチックの日に出さない（ペットボトル・有害ごみの日へ）\n・朝8時30分までに集積場所へ",
+  disc:"相模原市の公式のごみ分別検索と、まとめサイトの情報をもとにしています。ガラス食器・陶磁器が一般ごみなど、他の市と違う点に注意してください。確認できなかったゴミは出題から外しています。",
+  src:"https://www.city.sagamihara.kanagawa.jp/kurashi/1026489/recycle/1026493/1036314/1036284.html"}
 };
 var CNT={"調布":74,"杉並":73,"府中":66,"三鷹":65,"小金井":60,"武蔵野":40,"西東京":36,"練馬":30,"世田谷":26,"八王子":22,"国分寺":21,"小平":15,"日野":15,"中野":15,"立川":13,"東村山":11,"新宿":7,"稲城":7,"東久留米":6,"昭島":6,"国立":6,"東大和":6,"福生":5,"狛江":4,"港":4,"町田":3,"多摩":3,"清瀬":2,"目黒":2,"板橋":2,"あきる野":2,"江東":2,"武蔵村山":2,"青梅":2,"羽村":1,"千代田":1,"墨田":1,"北":1,"渋谷":1,"品川":1,"足立":1,"江戸川":1};
 function cnt(n){return CNT[n.replace(/[市区町村]$/,"")]||0}
@@ -1205,15 +1324,18 @@ function lookup(){var ct=city();return BASE.filter(function(it){return ct.cats.i
 var UNVTXT="この地域の公式案内では確認できていないため、一般的な目安です。自治体の分別辞典で確認してください。";
 function srcLink(ct){return ct.src?'<p><a href="'+ct.src+'" target="_blank" rel="noopener">'+esc(ct.name)+'の公式サイトで確認</a></p>':''}
 function answerHTML(ct,it,extra){var cat=itemCat(ct,it),bad=unv(ct,it);
-  return '<b>'+it.e+' '+esc(it.n)+'</b>'+(bad?'<p class="warn">⚠️ '+UNVTXT+'</p>':'')+'<p>'+(bad?'一般的な目安：':'分別先：')+'<strong>'+esc(cname(ct,cat))+'</strong></p><p>'+esc(bad?it.x:itemNote(ct,it))+'</p>'+(extra||'')+srcLink(ct)}
+  return '<b>'+it.e+' '+esc(it.n)+'</b>'+(bad?'<p class="warn">⚠️ '+UNVTXT+'</p>':'')+'<p>'+(bad?'一般的な目安：':'分別先：')+'<strong>'+esc(cname(ct,cat))+'</strong></p><p>'+esc(bad?it.x:itemNote(ct,it))+'</p>'+(extra||'')+recycleHTML(ct,it,cat)+srcLink(ct)}
 function badge(){var ct=city();return ct.user?"✏️ あなたが追加したルールです":ct.src?"✅ 公式サイトの情報をもとに作成（確認できない品目は「未確認」と表示）":"ℹ️ 一般的なルールです"}
 function show(id){["modeMenu","photo","roadmap","start","edit","notes","play","end"].forEach(function(s){$(s).hidden=s!==id});window.scrollTo(0,0)}
 function opt(k){return '<option value="'+k+'"'+(k===cur?" selected":"")+'>'+esc(CITIES[k].name)+'</option>'}
 function fillSel(){
   var ks=Object.keys(CITIES),h="";
-  var done=ks.filter(function(k){return k!=="generic"&&k!=="yokohama"&&!CITIES[k].user}).sort(function(a,b){return cnt(CITIES[b].name)-cnt(CITIES[a].name)});
-  h+='<optgroup label="調べ済みの東京の市区">'+done.map(opt).join("")+'</optgroup>';
-  h+='<optgroup label="そのほか">'+opt("generic")+opt("yokohama")+'</optgroup>';
+  ["東京都","神奈川県","埼玉県","千葉県","茨城県","栃木県","群馬県"].forEach(function(p){
+    var l=ks.filter(function(k){var c=CITIES[k];return k!=="generic"&&!c.user&&(c.pref||"東京都")===p});
+    if(p==="東京都")l.sort(function(a,b){return cnt(CITIES[b].name)-cnt(CITIES[a].name)});
+    if(l.length)h+='<optgroup label="'+p+'（調べ済み）">'+l.map(opt).join("")+'</optgroup>';
+  });
+  h+='<optgroup label="そのほか">'+opt("generic")+'</optgroup>';
   var us=ks.filter(function(k){return CITIES[k].user});
   if(us.length)h+='<optgroup label="自分で追加した地域">'+us.map(opt).join("")+'</optgroup>';
   $("citySel").innerHTML=h;
@@ -1221,7 +1343,7 @@ function fillSel(){
 }
 function home(){
   var ct=city();fillSel();applyKid();
-  $("guide").innerHTML=ct.cats.map(function(id){var c=CATS[id];return '<div style="--col:'+c.col+'"><b>'+c.ico+' '+esc(cn(ct,id))+'</b>'+(ct.user?'':'<br><span class="sub">'+kd((ct.subs&&ct.subs[id])||c.sub)+'</span>')+'</div>'}).join("");
+  $("guide").innerHTML=ct.cats.map(function(id){var c=CATS[id];return '<div style="--col:'+c.col+'"><b>'+c.ico+' '+esc(cn(ct,id))+'</b>'+(ct.user?'':'<br><span class="sub">'+kd((ct.subs&&ct.subs[id])||c.sub)+'</span>')+(isRes(id)?'<br><span class="sub">♻️ '+(kidMode?'しげん → ':'資源 → ')+esc(kidMode?RECY[id].tok:RECY[id].to)+'</span>':'')+'</div>'}).join("");
   $("tips").hidden=!ct.tips;$("tips").textContent=ct.tips||"";
   $("disc").textContent=ct.disc||(ct.user?"あなたが追加した区分で出題します。":"");
   var a=$("src");a.hidden=!ct.src;if(ct.src)a.href=ct.src;
@@ -1377,7 +1499,7 @@ function showLeaf(key){
   var cats={};items.forEach(function(it){cats[itemCat(ct,it)]=1});var same=Object.keys(cats).length===1,anyUnv=items.some(function(it){return unv(ct,it)});
   var head=same&&!anyUnv?'<p>✅ この仲間は、すべて<strong>「'+esc(cn(ct,Object.keys(cats)[0]))+'」</strong>です。</p>':same?'<p>この仲間は一般的に<strong>「'+esc(cn(ct,Object.keys(cats)[0]))+'」</strong>ですが、一部は未確認です。</p>':'<p>⚠️ <strong>品目によって分別先が変わります。</strong>下の一覧で、いちばん近いものを確認してください。</p>';
   var rows=items.map(function(it){var bad=unv(ct,it),cat=itemCat(ct,it);return '<div class="road-row"><span>'+it.e+' '+esc(it.n)+(bad?' <small>（未確認）</small>':'')+'</span><span class="pill">'+esc(cn(ct,cat))+'</span><small>'+esc(bad?"一般的な目安です。":itemNote(ct,it))+'</small></div>'}).join("");
-  res.innerHTML='<b>'+esc(kd(leaf.label))+'</b>'+head+rows+'<p><small>💡 '+esc(leaf.tip)+'</small></p><p><small>'+(ct.src?'出典：'+esc(ct.name)+'の公式サイトの案内':'一般的なルールです')+'。品目の状態（汚れ・大きさ）で変わることがあります。</small></p>'+srcLink(ct);
+  res.innerHTML='<b>'+esc(kd(leaf.label))+'</b>'+head+rows+recLeaf(ct,items)+'<p><small>💡 '+esc(leaf.tip)+'</small></p><p><small>'+(ct.src?'出典：'+esc(ct.name)+'の公式サイトの案内':'一般的なルールです')+'。品目の状態（汚れ・大きさ）で変わることがあります。</small></p>'+srcLink(ct);
   res.hidden=false;
 }
 $("roadUndo").onclick=function(){
@@ -1401,6 +1523,7 @@ function start(){
   q=chooseItems(N);idx=0;score=0;miss=[];streak=0;best=0;show("play");render()
 }
 function render(){
+  if(idx===0)seen=[];
   var it=q[idx],ct=city();locked=false;tries=0;
   $("qn").textContent=(idx+1)+" / "+N+(ct.pending?"　※一般ルール":"");updBar();
   $("fill").style.width=((idx+1)/N*100)+"%";
@@ -1419,7 +1542,7 @@ function render(){
       b.style.setProperty("--x",pos[0]+"%");b.style.setProperty("--y",pos[1]+"%");
       b.setAttribute("aria-label",cn(ct,id)+"へ分別");
     }
-    b.innerHTML='<span class="ico">'+c.ico+'</span><span>'+esc(cn(ct,id))+'</span>';
+    b.innerHTML='<span class="ico">'+c.ico+'</span><span>'+esc(cn(ct,id))+'</span>'+(isRes(id)?'<i class="resb" title="資源（リサイクル）">♻️</i>':'');
     b.onclick=function(){answer(id)};box.appendChild(b);
   });
 }
@@ -1433,7 +1556,7 @@ function answer(id){
     streak=0;updBar();var hb=$("hintbar");hb.hidden=false;hb.innerHTML="<b>おしい！もういちど えらんでみよう</b>　ヒント："+esc(KID[it.id][1]);
     return;
   }
-  locked=true;
+  locked=true;seen.push(it);
   if(tries===0){rec(it,ok);if(ok){score++;streak++;if(streak>best)best=streak}else{miss.push(it);streak=0}}else streak=0;if(navigator.vibrate)try{navigator.vibrate(ok?12:[30,40,30])}catch(e){}
   var cd=$("card");cd.classList.remove("drop","shake");cd.style.opacity="";cd.style.visibility="";cd.style.transform="";
   if(ok){
@@ -1455,6 +1578,7 @@ function answer(id){
   var fb=$("fb");fb.hidden=false;fb.className="fb "+(ok?"ok":"ng");$("hintbar").hidden=true;$("dock").hidden=false;$("dock").className="dock "+(ok?"ok":"ng");
   if(kidMode)fb.innerHTML="<b>"+(ok?"正解！":"もう一度確認しよう。正解は「"+esc(cn(ct,right))+"」だよ")+"</b>"+esc(KID[it.id][1])+'<div class="parent"><b>おうちの人へ（くわしいルール）</b>'+esc(itemNote(ct,it))+'</div>';
   else fb.innerHTML="<b>"+(ok?"正解！":"ざんねん。正解は「"+esc(cname(ct,right))+"」")+"</b>"+esc(itemNote(ct,it));
+  fb.innerHTML+=recycleHTML(ct,it,right);
   updBar();
   var nx=$("next");nx.hidden=false;nx.textContent=idx===N-1?"結果を見る":"次へ";nx.focus();
 }
@@ -1466,10 +1590,41 @@ function finish(){
   $("stars").textContent="⭐".repeat(stars)+"☆".repeat(3-stars);
   $("rank").textContent=kidMode?(pct===100?"分別マスター！全問正解！":pct>=80?"よくできました！あと少しで満点！":pct>=50?"いい調子！間違えた問題を復習しよう。":"もう一度挑戦してみよう。"):(pct===100?"ゴミ分別マスター！完ぺきです。":pct>=80?"とても良い！あと少しで満点。":pct>=50?"まずまず。まちがえた項目を復習しよう。":"ここから伸びしろたっぷり。もう一度挑戦しよう。");
   $("stats").innerHTML='<div><b>'+score+'</b><small>正解</small></div><div><b>'+miss.length+'</b><small>まちがい</small></div><div><b>'+best+'</b><small>最高連続</small></div>';
-  $("missWrap").hidden=miss.length===0;$("retryMiss").hidden=miss.length===0;
+  $("missWrap").hidden=miss.length===0;$("retryMiss").hidden=miss.length===0;recap();
   $("miss").innerHTML=miss.map(function(m){return "<li>"+m.e+" <b>"+esc(kidMode?KID[m.id][0]:m.n)+"</b> → "+esc(cn(ct,itemCat(ct,m)))+"<br><span class='sub'>"+esc(itemNote(ct,m))+"</span></li>"}).join("");
 }
 $("retryMiss").onclick=function(){var m=miss.slice();if(!m.length)return;q=shuffle(m);N=q.length;idx=0;score=0;miss=[];streak=0;best=0;show("play");render()};
+/* ♻️ リサイクルを学ぶ */
+var RECY={
+ pet:{fact:"ペットボトルは、洗って集められ、衣類やカーペットなどの繊維、新しいボトルなどに生まれ変わります。",factk:"ペットボトルは、ふくや カーペット、あたらしいボトルに うまれかわるよ。",to:"衣類・カーペットなどの繊維や、新しいボトル",tok:"ふくや カーペット、あたらしいボトル",prep:"中をすすぐ（キャップ・ラベルは市のルールに合わせて外す）",prepk:"なかを すすごうね"},
+ can:{fact:"缶は溶かして、新しい缶や金属製品の材料になります。アルミ缶は、何度でも缶に生まれ変わります。",factk:"かんは とかして、あたらしい かんや きんぞくせいひんに なるよ。",to:"新しい缶や金属製品",tok:"あたらしい かんや きんぞくの せいひん",prep:"中を軽くすすぐ",prepk:"なかを かるく すすごう"},
+ glass:{fact:"ガラスびんは、砕いて溶かし、新しいびんに生まれ変わります。",factk:"ガラスびんは くだいて とかして、あたらしい びんに なるよ。",to:"新しいびんやガラス製品の材料",tok:"あたらしい びん",prep:"中をすすぎ、キャップは外す",prepk:"なかを すすいで、キャップは はずそう"},
+ bottle:{fact:"びんや缶は、溶かして新しいびん・缶・金属製品に生まれ変わります。",factk:"びんや かんは とかして、あたらしい びんや かんに なるよ。",to:"新しいびん・缶・金属製品",tok:"あたらしい びんや かん",prep:"中を軽くすすぐ",prepk:"なかを かるく すすごう"},
+ paper:{fact:"古紙は、再生紙・段ボール・トイレットペーパーなどに生まれ変わります。",factk:"ふるがみは、さいせいし・だんボール・トイレットペーパーに なるよ。",to:"再生紙・段ボール・トイレットペーパー",tok:"さいせいし・だんボール・トイレットペーパー",prep:"種類ごとにまとめ、ひもでしばる（ぬらさない）",prepk:"しゅるいごとに ひもで しばろう"},
+ plastic:{fact:"プラスチックは集められて、新しいプラスチック製品や、化学原料などに生まれ変わります。",factk:"プラスチックは あつめて、あたらしい プラスチックせいひんに なるよ。",to:"新しいプラスチック製品や原料",tok:"あたらしい プラスチックせいひん",prep:"軽くすすぐ（汚れが落ちないものは資源にならない市もあります）",prepk:"かるく すすごう"},
+ metal:{fact:"金属は溶かして、また金属製品の材料になります。",factk:"きんぞくは とかして、また きんぞくの せいひんに なるよ。",to:"金属製品の材料",tok:"きんぞくの ざいりょう",prep:"金属以外の部分は取り除く",prepk:"きんぞく いがいの ぶぶんは とろう"},
+ burn:{fact:"🌱 資源にできるものが混ざっていないか、出す前にもう一度確認しましょう。燃やすごみは焼却され、熱を発電や温水に使う清掃工場もあります。",factk:"🌱 しげんに なるものが まざっていないか、もういちど みてみよう。"},
+ nonburn:{fact:"🌱 燃やさないごみは、破砕して金属などを取り出し、リサイクルしている自治体もあります。資源に分けられるものは、混ぜずに出しましょう。",factk:"🌱 もやさない ごみは、こなごなに して きんぞくを とりだす まちも あるよ。"},
+ hazard:{fact:"🌱 電池や蛍光管などは、専用の回収で、含まれる金属などを取り出してリサイクルされます。他のごみと分けて出しましょう。",factk:"🌱 でんちや けいこうかんは、べつに して だそうね。"}
+};
+var FUN={cap:"キャップは本体と素材が違うので、外して分けるとリサイクルしやすくなります。",label:"ラベルは本体と素材が違うので、外して分けるとリサイクルしやすくなります。",milk:"牛乳パックは、洗って開いて乾かすと、トイレットペーパーなどに生まれ変わります。",news:"新聞紙は、新しい新聞紙やトイレットペーパーなどに生まれ変わります。",box:"段ボールは、くり返し段ボールに生まれ変わります。"};
+var FUNK={cap:"キャップと ほんたいは ざいりょうが ちがうから、わけると リサイクルしやすいよ。",label:"ラベルと ほんたいは ざいりょうが ちがうから、わけると リサイクルしやすいよ。",milk:"ぎゅうにゅうパックは、あらって ひらいて かわかすと、トイレットペーパーに なるよ。",news:"しんぶんしは、あたらしい しんぶんしや トイレットペーパーに なるよ。",box:"だんボールは、なんども だんボールに うまれかわるよ。"};
+function isRes(cat){return ["plastic","glass","can","pet","bottle","paper","metal"].indexOf(cat)>-1}
+function recycleHTML(ct,it,cat){
+  var r=RECY[cat];if(!r)return "";
+  if(isRes(cat)){
+    var f=kidMode?(FUNK[it.id]||r.factk):(FUN[it.id]||r.fact);
+    return '<div class="recy">♻️ <b>'+(kidMode?'しげんごみだよ！ リサイクルしよう':'資源ごみです。リサイクルしましょう')+'</b><br>'+esc(f)+'<br><small>'+(kidMode?'うまれかわり：':'生まれ変わり：')+esc(kidMode?r.tok:r.to)+'　／　'+(kidMode?'だすまえに：':'出す前に：')+esc(kidMode?r.prepk:r.prep)+'</small></div>';
+  }
+  return '<div class="recy nr">'+esc(kidMode?r.factk:r.fact)+'</div>';
+}
+function recLeaf(ct,items){var it=items.filter(function(x){return isRes(itemCat(ct,x))})[0];return it?recycleHTML(ct,it,itemCat(ct,it)):""}
+var seen=[];
+function recap(){var ct=city(),g={};seen.forEach(function(it){var c=itemCat(ct,it);if(isRes(c)){(g[c]=g[c]||[]).push(it)}});var ks=Object.keys(g),box=$("recapRes");
+  if(!ks.length){box.hidden=true;return}
+  box.hidden=false;box.className="recy";
+  box.innerHTML='<b>♻️ '+(kidMode?'きょう であった しげんごみ':'今回の資源ごみ')+'</b>'+ks.map(function(c){var r=RECY[c],em=g[c].map(function(it){return it.e}).filter(function(e,i,x){return x.indexOf(e)===i}).join(" ");return '<div>'+CATS[c].ico+' '+esc(cn(ct,c))+'　'+em+'<br><small>→ '+esc(kidMode?r.tok:r.to)+'</small></div>'}).join("");
+}
 /* まちがい記録（この端末のブラウザ内だけに保存） */
 var MKEY="gomi-mistakes-v1";
 function logAll(){try{var o=JSON.parse(localStorage.getItem(MKEY)||"{}");return o&&typeof o==="object"?o:{}}catch(e){return{}}}
@@ -1504,7 +1659,7 @@ $("qResult").onclick=function(){closeQuit();N=doneCount();finish()};
 $("qExit").onclick=function(){closeQuit();showMenu()};
 $("quitModal").onclick=function(e){if(e.target===this)closeQuit()};
 function openPeek(){if(modalOpen)return;modalOpen=true;var ct=city(),cur0=(q[idx]&&!locked)?q[idx].id:"",its=lookup().filter(function(it){return !unv(ct,it)&&it.id!==cur0});
-  $("peekBody").innerHTML=ct.cats.map(function(id){var ex=its.filter(function(it){return itemCat(ct,it)===id}).slice(0,8).map(function(it){return it.e}).join(" ");return '<div class="peekrow" style="--col:'+CATS[id].col+'"><b>'+CATS[id].ico+' '+esc(cn(ct,id))+'</b><span>'+(ex||"—")+'</span></div>'}).join("");
+  $("peekBody").innerHTML=ct.cats.map(function(id){var ex=its.filter(function(it){return itemCat(ct,it)===id}).slice(0,8).map(function(it){return it.e}).join(" ");return '<div class="peekrow" style="--col:'+CATS[id].col+'"><div><b>'+CATS[id].ico+' '+esc(cn(ct,id))+'</b>'+(isRes(id)?'<br><small>♻️ '+(kidMode?'しげん → ':'資源 → ')+esc(kidMode?RECY[id].tok:RECY[id].to)+'</small>':'')+'</div><span>'+(ex||"—")+'</span></div>'}).join("");
   $("peekModal").hidden=false;$("peekClose").focus()}
 function closePeek(){modalOpen=false;$("peekModal").hidden=true}
 $("peekBtn").onclick=openPeek;$("peekClose").onclick=closePeek;$("peekModal").onclick=function(e){if(e.target===this)closePeek()};
