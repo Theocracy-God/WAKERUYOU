@@ -5,10 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ゴミ分別チャレンジ</title>
   <style>
-    :root{--bg:#f3f6ef;--surface:#fff;--ink:#1f2a24;--sub:#5b6a61;--line:#d5ddd2;--ok:#1f8a4c;--ng:#c0392b;
-    --c1:#e8743b;--c2:#7a6f9b;--c3:#2e86c1;--c4:#2a9d8f;--c5:#b08d57;--c6:#7d8590;--c7:#b5495b;--c8:#4f9d3a;--c9:#5aa9c9;
-    box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-    @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151b17;--surface:#1f2822;--ink:#e8efe9;--sub:#9fb0a5;--line:#34423a;--ok:#4cc27d;--ng:#ef7b6c}}
+:root{--r:4px;--s1:4px;--s2:8px;--s3:16px;--s4:24px;--s5:32px;
+--bg:#F5F0E8;--surface:#FBF8F2;--ink:#1E2B25;--sub:#5F6B63;--line:#D9D2C5;
+--main:#2C4A3E;--on-main:#FFFFFF;--accent:#C8956D;--ok:#2C4A3E;--ng:#A8503E;
+--res:#2C4A3E;--gen:#7B6D5E;--haz:#9A6A42;
+--c1:var(--accent);--c2:var(--gen);--c3:var(--res);--c4:var(--res);--c5:var(--res);--c6:var(--gen);--c7:var(--haz);--c8:var(--res);--c9:var(--res);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141A17;--surface:#1B2320;--ink:#ECE6D9;--sub:#A8A395;--line:#2E3A34;--main:#8DBBA4;--on-main:#10201A;--accent:#D9A77C;--ok:#8DBBA4;--ng:#D98572;--res:#8DBBA4;--gen:#B3A594;--haz:#D9A77C}}
+
+    
     *{box-sizing:border-box}
     html,body{margin:0}
     body{background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;line-height:1.6;min-height:100vh}
@@ -16,35 +21,35 @@
     h1{font-size:1.5rem;margin:8px 0 4px}
     p{margin:0 0 12px}
     .sub{color:var(--sub);font-size:.88rem}
-    .bar{display:flex;justify-content:space-between;align-items:center;font-weight:700;margin-bottom:10px}
-    .track{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-bottom:18px}
+    .bar{display:flex;justify-content:space-between;align-items:center;font-weight:600;margin-bottom:10px}
+    .track{height:8px;background:var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:18px}
     .fill{height:100%;background:var(--ok);width:0;transition:width .3s}
-    .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px 16px;text-align:center;margin-bottom:16px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px 16px;text-align:center;margin-bottom:16px}
     .emoji{font-size:5rem;line-height:1.1}
-    .name{font-size:1.35rem;font-weight:700;margin-top:8px}
+    .name{font-size:1.35rem;font-weight:600;margin-top:8px}
     .hint{color:var(--sub);font-size:.85rem;margin-top:4px}
     .choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-    .choice{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;font:inherit;font-weight:700;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-left:8px solid var(--col);border-radius:12px;cursor:pointer;text-align:left}
+    .choice{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;font:inherit;font-weight:600;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-left:8px solid var(--col);border-radius:var(--r);cursor:pointer;text-align:left}
     .choice:hover:not(:disabled){border-color:var(--col)}
-    .choice:focus-visible,.btn:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--c3);outline-offset:2px}
+    .choice:focus-visible,.btn:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--main);outline-offset:2px}
     .choice:disabled{cursor:default}
     .choice.right{background:color-mix(in srgb,var(--ok) 18%,var(--surface));border-color:var(--ok)}
     .choice.wrong{background:color-mix(in srgb,var(--ng) 16%,var(--surface));border-color:var(--ng)}
     .ico{font-size:1.5rem}
-    .fb{border-radius:12px;padding:14px 16px;margin:16px 0 12px;border:2px solid var(--line);background:var(--surface)}
+    .fb{border-radius:var(--r);padding:14px 16px;margin:16px 0 12px;border:2px solid var(--line);background:var(--surface)}
     .fb.ok{border-color:var(--ok)}.fb.ng{border-color:var(--ng)}
     .fb b{display:block;margin-bottom:2px}
-    .btn{display:inline-block;font:inherit;font-weight:700;padding:12px 28px;border:0;border-radius:999px;background:var(--ink);color:var(--bg);cursor:pointer}
+    .btn{display:inline-block;font:inherit;font-weight:600;padding:12px 28px;border:0;border-radius:var(--r);background:var(--ink);color:var(--bg);cursor:pointer}
     .btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line);padding:8px 16px;font-size:.88rem}
     .center{text-align:center}
-    .big{font-size:3rem;font-weight:800;line-height:1.2}
+    .big{font-size:3rem;font-weight:600;line-height:1.2}
     ul.miss{list-style:none;padding:0;margin:12px 0;text-align:left}
     ul.miss li{padding:10px 0;border-bottom:1px solid var(--line);font-size:.92rem}
     .guide{display:grid;gap:6px;margin:14px 0 14px;font-size:.9rem}
     .guide div{border-left:6px solid var(--col);padding-left:10px}
-    .tips{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 14px;font-size:.9rem;white-space:pre-wrap}
+    .tips{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin:0 0 14px;font-size:.9rem;white-space:pre-wrap}
     .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
-    select,input[type=text],textarea{font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:10px;padding:8px 10px;max-width:100%}
+    select,input[type=text],textarea{font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:8px 10px;max-width:100%}
     select{min-width:0}
     textarea{width:100%;min-height:80px}
     .erow{border-bottom:1px solid var(--line);padding:10px 0;display:grid;gap:6px}
@@ -52,27 +57,27 @@
     .crow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
     .crow input[type=text]{flex:1}
     h2{font-size:1.05rem;margin:18px 0 6px}
-    .log{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px;height:50vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
-    .msg{max-width:88%;padding:8px 12px;border-radius:12px;white-space:pre-wrap;font-size:.95rem}
+    .log{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px;height:50vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
+    .msg{max-width:88%;padding:8px 12px;border-radius:var(--r);white-space:pre-wrap;font-size:.95rem}
     .msg.me{align-self:flex-end;background:var(--ink);color:var(--bg)}
     .msg.bot{align-self:flex-start;background:color-mix(in srgb,var(--ok) 12%,var(--surface));border:1px solid var(--line)}
     #q{flex:1;min-width:0}
     .parent{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);font-size:.82rem;color:var(--sub);font-weight:400}
     .parent b{display:block}
     body.kid{font-size:1rem}
-    body.kid .choice{font-size:1rem;border-radius:14px;padding:13px 12px}
+    body.kid .choice{font-size:1rem;border-radius:var(--r);padding:13px 12px}
     body.kid .emoji{font-size:5rem}
     body.kid .name{font-size:1.2rem;overflow-wrap:anywhere}
     .card{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;transition:transform .2s}
-    .card.drag{will-change:transform;transition:none;position:relative;z-index:10;box-shadow:0 10px 24px rgba(0,0,0,.3)}
+    .card.drag{will-change:transform;transition:none;position:relative;z-index:10;box-shadow:none}
     .card.drop{animation:drop .5s forwards}
     .card.shake{animation:shake .4s}
     @keyframes drop{to{transform:scale(.15) translateY(120px);opacity:0}}
     @keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
     @keyframes pop{40%{transform:scale(1.12)}}
-    .basket{flex-direction:column;justify-content:center;text-align:center;gap:4px;min-height:110px;border:2px solid var(--line);border-top:12px solid var(--col);border-radius:8px 8px 26px 26px;font-size:.95rem;transition:transform .15s,box-shadow .15s}
+    .basket{flex-direction:column;justify-content:center;text-align:center;gap:4px;min-height:110px;border:2px solid var(--line);border-top:12px solid var(--col);border-radius:var(--r);font-size:.95rem;transition:transform .15s,box-shadow .15s}
     .basket .ico{font-size:2.6rem}
-    .basket.over{transform:scale(1.07);box-shadow:0 6px 16px rgba(0,0,0,.25);border-color:var(--col)}
+    .basket.over{transform:scale(1.07);box-shadow:none;border-color:var(--col)}
     .basket.right{animation:pop .5s}
 
     /* スマートフォン用：中央のゴミを8方向の分別先へドラッグするHUD */
@@ -85,7 +90,7 @@
       }
       .arena .card{
         position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-        width:34%;min-height:30%;margin:0;padding:10px 6px;border-radius:18px;
+        width:34%;min-height:30%;margin:0;padding:10px 6px;border-radius:var(--r);
         display:flex;flex-direction:column;justify-content:center;align-items:center;
         z-index:2;cursor:grab;touch-action:none;
       }
@@ -98,7 +103,7 @@
       .arena .basket{
         position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);
         width:31%;height:19%;min-height:66px;padding:5px 3px;gap:2px;
-        border-top-width:6px;border-radius:10px 10px 18px 18px;
+        border-top-width:6px;border-radius:var(--r);
         font-size:clamp(.62rem,2.6vw,.78rem);line-height:1.15;
         pointer-events:auto;overflow-wrap:anywhere;word-break:normal;
       }
@@ -113,79 +118,79 @@
       @keyframes radial-shake{25%{transform:translate(-50%,-50%) translateX(-7px)}75%{transform:translate(-50%,-50%) translateX(7px)}}
     }
     .mode-grid{display:grid;gap:12px;margin:20px 0}
-    .mode-card{display:flex;gap:14px;align-items:center;width:100%;padding:16px;text-align:left;border:2px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+    .mode-card{display:flex;gap:14px;align-items:center;width:100%;padding:16px;text-align:left;border:2px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
     .mode-card:active{transform:scale(.99)}
     .mode-icon{font-size:2.3rem;flex:0 0 48px;text-align:center}
     .mode-card strong{display:block;font-size:1.05rem}
     .mode-card small{display:block;color:var(--sub);line-height:1.4;margin-top:3px}
-    .photo-preview{width:100%;max-height:280px;object-fit:contain;border-radius:12px;background:var(--surface);border:1px solid var(--line);margin:12px 0}
-    .road-question{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0;text-align:center}
+    .photo-preview{width:100%;max-height:280px;object-fit:contain;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);margin:12px 0}
+    .road-question{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:16px 0;text-align:center}
     .road-question h2{font-size:1.2rem;margin:4px 0 16px}
     .yesno{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .yesno button{padding:14px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700}
-    .result-panel{background:var(--surface);border:2px solid var(--ok);border-radius:14px;padding:16px;margin:14px 0}
+    .yesno button{padding:14px;border-radius:var(--r);border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:600}
+    .result-panel{background:var(--surface);border:2px solid var(--ok);border-radius:var(--r);padding:16px;margin:14px 0}
     [hidden]{display:none!important}
-  .warn{background:color-mix(in srgb,var(--c1) 15%,var(--surface));border-radius:8px;padding:6px 10px;font-size:.88rem}
+  .warn{background:color-mix(in srgb,var(--c1) 15%,var(--surface));border-radius:var(--r);padding:6px 10px;font-size:.88rem}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 .road-opts{display:grid;gap:10px;margin-top:12px}
-.road-opt{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;font:inherit;font-weight:700;text-align:left;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:14px;cursor:pointer}
+.road-opt{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;font:inherit;font-weight:600;text-align:left;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:var(--r);cursor:pointer}
 .road-opt:hover,.road-opt:focus-visible{border-color:var(--ok)}
 .road-opt .ico{font-size:1.8rem}
 .road-trail{font-size:.82rem;color:var(--sub);margin:4px 0 8px;min-height:1.2em}
 .road-row{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .road-row small{grid-column:1/-1;color:var(--sub)}
-.pill{border:2px solid var(--ok);border-radius:999px;padding:2px 10px;font-weight:700;font-size:.85rem;text-align:center}
+.pill{border:2px solid var(--ok);border-radius:var(--r);padding:2px 10px;font-weight:600;font-size:.85rem;text-align:center}
 body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0;align-items:center}
-.chip{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;font:inherit;font-size:.85rem;cursor:pointer}
-.chip.on{border-color:var(--ok);font-weight:700}
+.chip{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:var(--r);padding:4px 12px;font:inherit;font-size:.85rem;cursor:pointer}
+.chip.on{border-color:var(--ok);font-weight:600}
 .slist{display:grid;gap:6px}
-.srow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.srow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:2px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
 .srow:hover,.srow:focus-visible{border-color:var(--ok)}
 .srow .ico{font-size:1.6rem}
-.photo-aux{margin:14px 0;padding:8px 12px;border:1px dashed var(--line);border-radius:12px}
-.photo-aux summary{cursor:pointer;font-weight:700}
+.photo-aux{margin:14px 0;padding:8px 12px;border:1px dashed var(--line);border-radius:var(--r)}
+.photo-aux summary{cursor:pointer;font-weight:600}
 .playhead{position:sticky;top:0;z-index:15;background:var(--bg);padding:6px 0 2px}
-.quit{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;font:inherit;font-size:.85rem;cursor:pointer}
-.streak{color:var(--c1);font-weight:800}
-.hintbar{background:color-mix(in srgb,var(--c1) 14%,var(--surface));border:2px solid var(--c1);border-radius:12px;padding:8px 12px;margin:6px 0;font-size:.92rem}
-.dock{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(100%,560px);z-index:30;display:grid;gap:8px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:var(--surface);border-radius:18px 18px 0 0;border-top:5px solid var(--line);box-shadow:0 -8px 24px rgba(0,0,0,.2);animation:dockup .25s ease-out}
+.quit{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:var(--r);padding:4px 12px;font:inherit;font-size:.85rem;cursor:pointer}
+.streak{color:var(--c1);font-weight:600}
+.hintbar{background:color-mix(in srgb,var(--c1) 14%,var(--surface));border:2px solid var(--c1);border-radius:var(--r);padding:8px 12px;margin:6px 0;font-size:.92rem}
+.dock{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(100%,560px);z-index:30;display:grid;gap:8px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:var(--surface);border-radius:var(--r);border-top:5px solid var(--line);box-shadow:none;animation:dockup .25s ease-out}
 .dock.ok{border-top-color:var(--ok)}.dock.ng{border-top-color:var(--ng)}
 .dock .fb{margin:0;border:0;padding:0;background:none}
 .dock .btn{width:100%}
 @keyframes dockup{from{transform:translate(-50%,100%)}to{transform:translate(-50%,0)}}
 #play{padding-bottom:210px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:50}
-.sheet{background:var(--surface);color:var(--ink);width:min(100%,560px);border-radius:20px 20px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));display:grid;gap:10px}
+.sheet{background:var(--surface);color:var(--ink);width:min(100%,560px);border-radius:var(--r);padding:20px 16px calc(20px + env(safe-area-inset-bottom));display:grid;gap:10px}
 .sheet h2{margin:0}
-@media (min-width:700px){.modal{align-items:center}.sheet{border-radius:20px}}
-.ring{--p:0;width:150px;height:150px;border-radius:50%;margin:14px auto;display:grid;place-content:center;background:conic-gradient(var(--ok) calc(var(--p)*1%),var(--line) 0);position:relative}
+@media (min-width:700px){.modal{align-items:center}.sheet{border-radius:var(--r)}}
+.ring{--p:0;width:150px;height:150px;border-radius:50%;margin:14px auto;display:grid;place-content:center;background:var(--line);position:relative}
 .ring::before{content:"";position:absolute;inset:12px;border-radius:50%;background:var(--bg)}
 .ring span,.ring small{position:relative;z-index:1}
-.ring span{font-size:2.2rem;font-weight:800;line-height:1.1}
+.ring span{font-size:2.2rem;font-weight:600;line-height:1.1}
 .stars{font-size:1.8rem;letter-spacing:.1em}
 .stats{display:flex;gap:10px;justify-content:center;margin:12px 0}
-.stats div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 14px;min-width:84px}
+.stats div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:8px 14px;min-width:84px}
 .stats b{display:block;font-size:1.3rem}
 .endbtns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
 .burst{position:fixed;pointer-events:none;z-index:40;font-size:1.2rem}
-.peekrow{display:flex;justify-content:space-between;align-items:center;gap:10px;border-left:8px solid var(--col);padding:8px 10px;margin:6px 0;background:var(--surface);border:1px solid var(--line);border-left:8px solid var(--col);border-radius:8px}
+.peekrow{display:flex;justify-content:space-between;align-items:center;gap:10px;border-left:8px solid var(--col);padding:8px 10px;margin:6px 0;background:var(--surface);border:1px solid var(--line);border-left:8px solid var(--col);border-radius:var(--r)}
 .peekrow span{font-size:1.25rem;text-align:right}
 #peekModal .sheet{max-height:82vh;overflow:auto}
 .chk{font-size:.9rem;white-space:nowrap}
 .nstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
-.nstats div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.nstats div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;text-align:center}
 .nstats b{display:block;font-size:1.5rem}.nstats small{color:var(--sub)}
 .nrow{display:grid;gap:2px;padding:10px 0;border-bottom:1px solid var(--line)}
 .nrow .nh{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .nrow small{color:var(--sub)}
-.recy{margin-top:8px;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--ok) 14%,var(--surface));border:1px solid var(--ok);font-size:.9rem;line-height:1.5}
+.recy{margin-top:8px;padding:8px 10px;border-radius:var(--r);background:color-mix(in srgb,var(--ok) 14%,var(--surface));border:1px solid var(--ok);font-size:.9rem;line-height:1.5}
 .recy.nr{background:var(--surface);border-color:var(--line)}
 .recy small{color:var(--sub)}
-.steps{background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:8px 10px;margin:10px 0;text-align:center;font-weight:700;font-size:.9rem}
-.bookcard{background:var(--surface);border:1px solid var(--line);border-left:8px solid var(--col);border-radius:10px;padding:10px 12px;margin:10px 0}
+.steps{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r);padding:8px 10px;margin:10px 0;text-align:center;font-weight:600;font-size:.9rem}
+.bookcard{background:var(--surface);border:1px solid var(--line);border-left:8px solid var(--col);border-radius:var(--r);padding:10px 12px;margin:10px 0}
 .bookcard h3{margin:0 0 4px;font-size:1.05rem}.bookcard .ex{font-size:1.5rem;margin:4px 0}.bookcard p{margin:4px 0;font-size:.92rem}
-.rcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;text-align:center;margin:10px 0}
+.rcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:center;margin:10px 0}
 .rcard .emoji{font-size:4.2rem;line-height:1.1}
 .road-opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--surface))}
 .road-opt.wrong{border-color:var(--ng);background:color-mix(in srgb,var(--ng) 14%,var(--surface))}
@@ -193,6 +198,73 @@ body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
 .stage:not(.ring) .basket{position:relative}
 .recy div{margin-top:6px}
 .peekrow small{color:var(--sub)}
+
+/* ===== design v2：控えめな配色・線画アイコン・小さい角丸・影なし・グラデーションなし ===== */
+body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic Medium","Yu Gothic",Meiryo,sans-serif;line-height:1.75;font-feature-settings:"palt"}
+main{padding:var(--s4) var(--s3) var(--s5)}
+h1{font-size:1.45rem;font-weight:600;letter-spacing:.02em;margin:var(--s2) 0 var(--s2);text-align:left}
+h2{font-size:1.05rem;font-weight:600;margin:var(--s4) 0 var(--s2)}
+p{margin:0 0 var(--s3)}
+.sub{color:var(--sub);font-size:.88rem}
+.ic{width:1.25em;height:1.25em;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.28em;flex:none}
+.ico .ic{width:1.6em;height:1.6em}
+.emoji{filter:saturate(.7)}
+.btn{background:var(--main);color:var(--on-main);border:1px solid var(--main);padding:12px 24px;font-weight:600;letter-spacing:.02em}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);padding:8px 14px}
+.btn.ghost:hover{border-color:var(--main)}
+select,input[type=text],input[type=search],textarea{border:1px solid var(--line);padding:8px 10px;background:var(--surface)}
+.card,.road-question,.tips,.result-panel,.fb,.stats div,.nstats div,.rcard,.bookcard,.photo-aux,.srow,.road-opt,.recy,.steps{box-shadow:none}
+.card{border:1px solid var(--line);background:var(--surface)}
+.result-panel{border:1px solid var(--line);border-left:3px solid var(--main)}
+.fb{border:1px solid var(--line);border-left:3px solid var(--line)}
+.fb.ok{border-left-color:var(--ok)}.fb.ng{border-left-color:var(--ng)}
+.dock{border-top:1px solid var(--line);border-radius:0;box-shadow:none;background:var(--surface)}
+.dock.ok{border-top-color:var(--ok)}.dock.ng{border-top-color:var(--ng)}
+.sheet{border-radius:var(--r) var(--r) 0 0}
+@media (min-width:700px){.sheet{border-radius:var(--r)}}
+.choice,.basket{border:1px solid var(--line);border-left:1px solid var(--line);border-top:2px solid var(--col);background:var(--surface);color:var(--ink)}
+.choice:hover:not(:disabled),.basket:hover:not(:disabled){border-color:var(--col);border-top-color:var(--col)}
+.basket{min-height:96px;gap:6px}
+.basket .ico,.arena .basket .ico{font-size:1rem;color:var(--col);line-height:1}
+.basket .ico .ic{width:1.7em;height:1.7em}
+.basket.over{transform:scale(1.03);border-color:var(--col);background:color-mix(in srgb,var(--col) 8%,var(--surface))}
+.arena .basket.over{transform:translate(-50%,-50%) scale(1.03)}
+.choice.right,.road-opt.right{background:color-mix(in srgb,var(--ok) 10%,var(--surface));border-color:var(--ok)}
+.choice.wrong,.road-opt.wrong{background:color-mix(in srgb,var(--ng) 9%,var(--surface));border-color:var(--ng)}
+.resb{color:var(--res)}.resb .ic{width:.95em;height:.95em}
+.guide div{border-left:3px solid var(--col)}
+.peekrow{border:1px solid var(--line);border-left:3px solid var(--col)}
+.bookcard{border:1px solid var(--line);border-left:3px solid var(--col)}
+.pill{border:1px solid var(--main);color:var(--main);font-weight:600;border-radius:var(--r);padding:1px 8px}
+.chip,.quit{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--ink)}
+.chip.on{border-color:var(--main);color:var(--main);font-weight:600}
+.srow,.road-opt{border:1px solid var(--line);background:var(--surface)}
+.srow:hover,.road-opt:hover,.road-opt:focus-visible{border-color:var(--main)}
+.recy{background:color-mix(in srgb,var(--main) 7%,var(--surface));border:1px solid var(--line);border-left:3px solid var(--main);font-size:.9rem}
+.recy.nr{background:var(--surface);border-left-color:var(--gen)}
+.recy .ic{color:var(--main)}
+.warn{background:color-mix(in srgb,var(--accent) 16%,var(--surface));border-left:3px solid var(--accent);border-radius:var(--r);padding:6px 10px}
+.warn .ic{color:var(--haz)}
+.hintbar{background:color-mix(in srgb,var(--accent) 14%,var(--surface));border:1px solid var(--accent);border-radius:var(--r)}
+.streak{color:var(--haz);font-weight:600}
+.fill{background:var(--main)}.track{border-radius:var(--r)}
+.burst{width:8px;height:8px;border-radius:50%;font-size:0}
+.stars{color:var(--accent);letter-spacing:.2em;font-size:1.4rem}
+.ring{width:auto;height:auto;margin:var(--s3) auto;padding:var(--s3) var(--s4);display:inline-grid;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.ring::before{display:none}
+.ring span{font-size:2rem;font-weight:600}
+.mode-grid{display:block;margin:var(--s4) 0;border-top:1px solid var(--line)}
+.mode-card{display:flex;gap:var(--s3);align-items:center;width:100%;padding:var(--s3) var(--s1);border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;position:relative}
+.mode-card::after{content:"";width:8px;height:8px;border-top:1.5px solid var(--sub);border-right:1.5px solid var(--sub);transform:rotate(45deg);margin-left:auto;flex:none}
+.mode-card:hover{background:color-mix(in srgb,var(--main) 5%,transparent)}
+.mode-card:active{transform:none}
+.mode-icon{flex:0 0 32px;color:var(--main);font-size:1rem;text-align:left}
+.mode-icon .ic{width:1.6em;height:1.6em}
+.mode-card strong{font-weight:600;font-size:1.02rem}
+body.kid .choice{border-radius:var(--r)}
+body.kid .mode-card strong{font-size:1.1rem}
+@media (max-width:700px){.arena .basket{border-top-width:2px;border-radius:var(--r)}.arena .card{border-radius:var(--r)}}
 </style>
 </head>
 <body>
@@ -201,10 +273,10 @@ body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
     <h1>ゴミ分別チャレンジ</h1>
     <p class="sub">目的に合わせて、分別方法を調べよう。</p>
     <div class="mode-grid">
-      <button class="mode-card" id="classicMode"><span class="mode-icon">🎮</span><span><strong>ゴミ分別ゲーム</strong><small>出てきたごみを、正しい分別先へドラッグして挑戦。</small></span></button>
-      <button class="mode-card" id="photoMode"><span class="mode-icon">🔎</span><span><strong>分別を調べる</strong><small>品目名で検索して、地域のルールを確認。写真は補助として使えます。</small></span></button>
-      <button class="mode-card" id="roadMode"><span class="mode-icon">🧭</span><span><strong>分別さがしナビ</strong><small>「何でできている？」など大きなくくりから質問して、だんだん絞り込みます。</small></span></button>
-      <button class="mode-card" id="notesMode"><span class="mode-icon">📒</span><span><strong>まちがいノート</strong><small>自分のまちがいをこの端末に記録して、苦手な品目だけ復習できます。</small></span></button>
+      <button class="mode-card" id="classicMode"><span class="mode-icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM9 9l6 3-6 3V9"/></svg></span><span><strong>ゴミ分別ゲーム</strong><small>出てきたごみを、正しい分別先へドラッグして挑戦。</small></span></button>
+      <button class="mode-card" id="photoMode"><span class="mode-icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4"/></svg></span><span><strong>分別を調べる</strong><small>品目名で検索して、地域のルールを確認。写真は補助として使えます。</small></span></button>
+      <button class="mode-card" id="roadMode"><span class="mode-icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM15.5 8.5l-2 5-5 2 2-5 5-2z"/></svg></span><span><strong>分別さがしナビ</strong><small>「何でできている？」など大きなくくりから質問して、だんだん絞り込みます。</small></span></button>
+      <button class="mode-card" id="notesMode"><span class="mode-icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6zM9 3v18M12 8h3"/></svg></span><span><strong>まちがいノート</strong><small>自分のまちがいをこの端末に記録して、苦手な品目だけ復習できます。</small></span></button>
     </div>
     <div class="row"><label for="citySelMenu"><b>地域</b></label><select id="citySelMenu" aria-label="地域"></select><button class="btn ghost" id="editBtnMenu">この地域を編集</button><button class="btn ghost" id="addBtnMenu">＋ 新しい市区町村を追加</button></div>
     <p class="sub" id="menuBadge"></p>
@@ -213,7 +285,7 @@ body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
   </section>
 
   <section id="photo" hidden>
-    <h1>🔎 分別を調べる</h1>
+    <h1> 分別を調べる</h1>
     <p class="sub">品目名で検索して、選んだ地域のルールを確認します。</p>
     <input type="search" id="photoQ" placeholder="例：牛乳パック・ペットボトル・傘" aria-label="品目を検索" autocomplete="off" style="width:100%;margin:8px 0;font-size:1.05rem">
     <div class="chips" id="photoChips"></div>
@@ -221,16 +293,16 @@ body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
     <div id="photoResult" class="result-panel" hidden aria-live="polite"></div>
     <p class="sub" id="photoCount"></p>
     <div id="photoList" class="slist"></div>
-    <details class="photo-aux"><summary>📷 写真でさがす（補助機能）</summary>
+    <details class="photo-aux"><summary> 写真でさがす（補助機能）</summary>
       <p class="sub">写真は検索の補助です。選んだ写真は画面に表示されるだけで、端末の外へは送信されません。見ながら、上の検索窓で品目を探してください。</p>
       <input type="file" id="photoFile" accept="image/*" aria-label="ごみの写真を選択">
       <img id="photoPreview" class="photo-preview" alt="選択したごみの写真" hidden>
     </details>
-    <div class="center"><button class="btn ghost" id="photoRoad">🧭 ナビで絞り込む</button> <button class="btn ghost" id="photoBack">モード選択へ戻る</button></div>
+    <div class="center"><button class="btn ghost" id="photoRoad"> ナビで絞り込む</button> <button class="btn ghost" id="photoBack">モード選択へ戻る</button></div>
   </section>
 
   <section id="roadmap" hidden>
-    <h1>🧭 分別さがしナビ</h1>
+    <h1> 分別さがしナビ</h1>
     <p class="sub" id="roadProgress"></p>
     <div class="road-trail" id="roadTrail"></div>
     <div class="road-question" id="roadBox"><h2 id="roadQuestion"></h2><div class="road-opts" id="roadOpts"></div></div>
@@ -264,7 +336,7 @@ body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
   
 
   <section id="notes" hidden>
-    <h1>📒 まちがいノート</h1>
+    <h1> まちがいノート</h1>
     <p class="sub" id="notesCity"></p>
     <div class="nstats" id="notesStats"></div>
     <div id="notesList"></div>
@@ -277,7 +349,7 @@ body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
   </section>
 
   <section id="play" hidden>
-    <div class="playhead"><div class="bar"><button class="quit" id="quitBtn" type="button" aria-label="ゲームをやめる">✕ やめる</button><button class="quit" id="peekBtn" type="button" aria-label="分別先の見本を見る">📋 みほん</button><span id="qn"></span><span id="sc"></span></div><div class="track"><div class="fill" id="fill"></div></div></div>
+    <div class="playhead"><div class="bar"><button class="quit" id="quitBtn" type="button" aria-label="ゲームをやめる"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg> やめる</button><button class="quit" id="peekBtn" type="button" aria-label="分別先の見本を見る"> みほん</button><span id="qn"></span><span id="sc"></span></div><div class="track"><div class="fill" id="fill"></div></div></div>
     <div class="hintbar" id="hintbar" hidden aria-live="polite"></div>
     <div class="arena" id="arena">
       <div class="card" id="card"><div class="emoji" id="em"></div><div class="name" id="nm"></div><div class="hint">ゴミを周りの分別先へドラッグ！</div></div>
@@ -301,17 +373,19 @@ body.kid .road-opt{font-size:1.1rem;padding:18px 16px}
 <div class="modal" id="quitModal" hidden role="dialog" aria-modal="true" aria-labelledby="quitTitle"><div class="sheet"><h2 id="quitTitle">ゲームをやめますか？</h2><p class="sub" id="quitInfo"></p><button class="btn" id="qResume">つづける</button><button class="btn ghost" id="qResult">ここまでの結果を見る</button><button class="btn ghost" id="qExit">やめてモード選択へ</button></div></div>
 <div class="modal" id="peekModal" hidden role="dialog" aria-modal="true" aria-labelledby="peekTitle"><div class="sheet"><h2 id="peekTitle">分別先の見本</h2><div id="peekBody"></div><button class="btn" id="peekClose">とじる</button></div></div>
 <script>
+var IC={"flame": "M12 3c.8 2.6 4 4.4 4 8.2A4 4 0 0 1 8 11c0-1.5.6-2.5 1.4-3.4.4 1 .9 1.4 1.6 1.5C10.9 7.5 10.8 5 12 3z", "cube": "M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3zM4 7.5l8 4.5 8-4.5M12 12v9", "recycle": "M4 12a8 8 0 0 1 13.7-5.6M20 4v4h-4M20 12a8 8 0 0 1-13.7 5.6M4 20v-4h4", "bag": "M6 8h12l-1 12H7L6 8zM9 8V6a3 3 0 0 1 6 0v2", "bottle": "M10 3h4M10 3v4c0 1.5-2 2-2 4v8a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-8c0-2-2-2.5-2-4V3", "can": "M7 5c0-1.1 2.2-2 5-2s5 .9 5 2M7 5v14c0 1.1 2.2 2 5 2s5-.9 5-2V5M7 5c0 1.1 2.2 2 5 2s5-.9 5-2", "petbottle": "M10 2h4v3l1.5 2.5V20a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V7.5L10 5V2zM8.5 12h7", "file": "M7 3h7l4 4v14H7V3zM14 3v4h4M10 12h5M10 16h5", "wrench": "M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-.5-.5-2.5 2.5-2.5z", "alert": "M12 3l10 18H2L12 3zM12 10v5M12 18v.5", "check": "M5 12.5l4.5 4.5L19 7", "x": "M6 6l12 12M18 6L6 18", "search": "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4", "compass": "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM15.5 8.5l-2 5-5 2 2-5 5-2z", "book": "M6 3h12v18H6zM9 3v18M12 8h3", "play": "M5 4h14v16H5zM9 9l6 3-6 3V9", "info": "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 11v5M12 8v.5", "leaf": "M5 19C5 10 11 5 20 4c0 9-5 15-14 15M5 19l8-8", "log": "M4 8c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 8v8c0 1.7 3.6 3 8 3s8-1.3 8-3V8"};
+function ic(n){return IC[n]?'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="'+IC[n]+'"/></svg>':""}
 var CATS={
- burn:{name:"燃やすごみ",ico:"🔥",col:"var(--c1)",sub:"生ごみ・汚れた紙・紙おむつなど"},
- nonburn:{name:"燃やさないごみ",ico:"🧱",col:"var(--c2)",sub:"陶器・ガラス・金属製品など"},
- plastic:{name:"プラスチック資源",ico:"♻️",col:"var(--c3)",sub:"プラ容器・包装・ペットボトルのふた"},
- bottle:{name:"びん・缶・ペットボトル",ico:"🥫",col:"var(--c4)",sub:"飲料びん・飲料缶・ペットボトル本体"},
- paper:{name:"古紙",ico:"📰",col:"var(--c5)",sub:"新聞・雑誌・段ボール・紙パック"},
- metal:{name:"小さな金属類",ico:"🔩",col:"var(--c6)",sub:"なべ・フライパン・傘の骨など"},
- glass:{name:"びん",ico:"🍾",col:"var(--c4)",sub:"飲料・食品のびん"},
- can:{name:"缶",ico:"🥫",col:"var(--c8)",sub:"飲料・食品の缶"},
- pet:{name:"ペットボトル",ico:"🥤",col:"var(--c9)",sub:"ペットボトル本体"},
- hazard:{name:"有害ごみ",ico:"⚠️",col:"var(--c7)",sub:"電池・蛍光管・スプレー缶など"}
+ burn:{name:"燃やすごみ",ico:ic("flame"),col:"var(--gen)",sub:"生ごみ・汚れた紙・紙おむつなど"},
+ nonburn:{name:"燃やさないごみ",ico:ic("cube"),col:"var(--gen)",sub:"陶器・ガラス・金属製品など"},
+ plastic:{name:"プラスチック資源",ico:ic("bag"),col:"var(--res)",sub:"プラ容器・包装・ペットボトルのふた"},
+ bottle:{name:"びん・缶・ペットボトル",ico:ic("bottle"),col:"var(--res)",sub:"飲料びん・飲料缶・ペットボトル本体"},
+ paper:{name:"古紙",ico:ic("file"),col:"var(--res)",sub:"新聞・雑誌・段ボール・紙パック"},
+ metal:{name:"小さな金属類",ico:ic("wrench"),col:"var(--res)",sub:"なべ・フライパン・傘の骨など"},
+ glass:{name:"びん",ico:ic("bottle"),col:"var(--res)",sub:"飲料・食品のびん"},
+ can:{name:"缶",ico:ic("can"),col:"var(--res)",sub:"飲料・食品の缶"},
+ pet:{name:"ペットボトル",ico:ic("petbottle"),col:"var(--res)",sub:"ペットボトル本体"},
+ hazard:{name:"有害ごみ",ico:ic("alert"),col:"var(--haz)",sub:"電池・蛍光管・スプレー缶など"}
 };
 var ORDER=["burn","nonburn","plastic","bottle","glass","can","pet","metal","paper","hazard"];
 var BASE=[
@@ -1293,7 +1367,162 @@ var CITIES={
   },
   tips:"・燃やすしかないごみ（一般ごみ）は週2回。中身の見える透明・半透明の袋（レジ袋可）で、片手で持てる量にして口を縛る\n・プラスチックは週1回。プラマークの容器包装と、50cm未満・厚さ5mm未満のプラ製品を同じ袋に\n・ペットボトルはプラスチックの日に出さない（ペットボトル・有害ごみの日へ）\n・朝8時30分までに集積場所へ",
   disc:"相模原市の公式のごみ分別検索と、まとめサイトの情報をもとにしています。ガラス食器・陶磁器が一般ごみなど、他の市と違う点に注意してください。確認できなかったゴミは出題から外しています。",
-  src:"https://www.city.sagamihara.kanagawa.jp/kurashi/1026489/recycle/1026493/1036314/1036284.html"}
+  src:"https://www.city.sagamihara.kanagawa.jp/kurashi/1026489/recycle/1026493/1036314/1036284.html"},
+ funabashi:{name:"船橋市",pref:"千葉県",cats:["burn","nonburn","glass","can","pet","paper"],
+  names:{burn:"可燃ごみ",nonburn:"不燃ごみ",glass:"びん",can:"缶",paper:"有価物（古紙）"},
+  subs:{burn:"生ごみ・紙くず・木くず・おむつ・プラスチック製品・発泡スチロールなど",nonburn:"陶器・ガラス・金属・傘・電池・蛍光管などの焼却できないもの"},
+  over:{shampoo:"burn",detergent:"burn",bento:"burn",snack:"burn",cap:"burn",label:"burn",foam:"burn",bag:"burn",yogurt:"burn",toy:"burn",jar:"glass",can:"can",pet:"pet"},
+  skip:["pizza","pan","bulb","tray","cup","hanger","milk"],
+  notes:{
+   tissue:"紙くずは可燃ごみです。",diaper:"おむつ類は可燃ごみです。",hashi:"木くずは可燃ごみです。",
+   dish:"陶器類（茶碗・皿・植木鉢など）は不燃ごみ。刃物や割れたガラスは紙やガムテープでしっかり巻いて、危険を防止します。",
+   vase:"ガラス類（割れビン・板ガラス・コップ・花瓶・鏡など）は不燃ごみです。",glasscup:"ガラス類（割れビン・板ガラス・コップ・花瓶・鏡など）は不燃ごみです。",
+   umb:"傘は不燃ごみ。指定袋からはみ出してもよい例外品目です。",
+   shampoo:"油・洗剤などのボトルは、識別マークがあってもペットボトルの回収対象外で、可燃ごみです（ふたを外すか穴をあけます）。",
+   detergent:"油・洗剤などのボトルは、識別マークがあってもペットボトルの回収対象外で、可燃ごみです。",
+   bento:"プラスチック製品は可燃ごみです。",snack:"プラスチック・ビニール類は可燃ごみです。",bag:"プラスチック・ビニール類は可燃ごみです。",yogurt:"プラスチック製品は可燃ごみです。",
+   cap:"外したラベルとふたは、可燃ごみです。",label:"外したラベルとふたは、可燃ごみです。",foam:"発泡スチロールは可燃ごみです。",
+   toy:"プラスチック製のおもちゃは可燃ごみ。金属を含むものは不燃ごみです。",
+   pet:"ラベルとふたをはずし、中を空にして軽く水ですすぎ、できるだけつぶして、収集用のあみ袋に入れます（ペットボトルだけを入れます）。",
+   jar:"びんはふたを外し、洗って回収ボックスへ。ふたは不燃ごみです。",can:"缶はキャップやふたを外し、軽くすすいで回収ボックスへ。"
+  },
+  tips:"・可燃ごみ（週2回）・不燃ごみ（月1回）は、市指定の袋（有料）で、朝8時30分まで（夜収集の地区は夜7時30分まで）\n・プラスチック製品・発泡スチロールは可燃ごみ\n・びん・缶は回収ボックス、ペットボトルは収集用あみ袋へ（ペットボトルだけを入れる）\n・乾電池・蛍光管は、不燃ごみとは別の透明な袋で出し、ステーションの端に置く",
+  disc:"船橋市の公式サイトの案内と、まとめサイトの情報をもとにしています。プラスチックを資源として集めない市なので、他の市と区分が違います。確認できなかったゴミは出題から外しています。",
+  src:"https://www.city.funabashi.lg.jp/kids/work/0003/p001560.html"},
+ kawaguchi:{name:"川口市",pref:"埼玉県",cats:["burn","plastic","metal","glass","can","pet","paper"],
+  names:{burn:"一般ごみ",plastic:"プラスチック製容器包装",glass:"びん",can:"飲料かん",metal:"金属類",paper:"紙類"},
+  subs:{burn:"生ごみ・割れ物（ガラス・電球・コップ）・製品プラスチックなど",plastic:"プラマークの容器包装（週1回・水曜日）",metal:"傘の骨組み・フライパン・缶詰の缶・スプレー缶など"},
+  over:{dish:"burn",vase:"burn",glasscup:"burn",cup:"burn",bulb:"burn",toy:"burn",umb:"metal",pan:"metal",canfood:"metal",jar:"glass",can:"can",pet:"pet"},
+  skip:["tissue","diaper","hashi","pizza","foam","hanger","milk"],
+  notes:{
+   dish:"ガラス・電球・コップなどの割れ物は、紙で包んで「われもの」と表記し、一般ごみに混ざらないように出します。",vase:"ガラス・電球・コップなどの割れ物は、紙で包んで「われもの」と表記して出します。",
+   glasscup:"ガラス・電球・コップなどの割れ物は、紙で包んで「われもの」と表記して出します。",cup:"割れ物は、紙で包んで「われもの」と表記して出します。",bulb:"電球は割れ物として、紙で包んで「われもの」と表記し、一般ごみで出します。",
+   umb:"傘は、金属製の骨組み部分は金属類（40cmを超えても可）、布などの部分は一般ごみです。必ず分けます。",
+   pan:"フライパンは金属類。持ち手の長さを含まずに40cmを超えるものは粗大ごみです。",
+   shampoo:"プラマークの付いたボトルは、軽くすすいで汚れを落とし、透明袋で、毎週水曜日に出します。",
+   bento:"弁当の容器・食品トレー・レジ袋・菓子袋・キャップ・ラベルなど、プラマークのあるものが対象です。汚れがひどいものは一般ごみです。",
+   cap:"ペットボトルのキャップとラベルは、プラスチック製容器包装です。",label:"ペットボトルのキャップとラベルは、プラスチック製容器包装です。",
+   toy:"製品として作られたプラスチック（おもちゃ・文具など）は一般ごみです。",
+   pet:"キャップとラベルを外し（プラスチック製容器包装へ）、中をすすぎ、つぶして透明袋で出します。",
+   can:"缶詰の缶・スプレー缶は金属類です。飲料かんは水ですすいで出します。",canfood:"缶詰の缶は金属類です。",
+   jar:"キャップ（ふた）を外し、水ですすいで透明袋へ。金属のふたは金属類、プラスチックのふたはプラスチック製容器包装へ。割れたびんは一般ごみです。"
+  },
+  tips:"・一般ごみ（週2回）は透明か白色半透明の袋で、朝8時30分までに一般ごみステーションへ\n・プラスチック製容器包装は毎週水曜日、透明袋で一般ごみステーションへ（資源物ステーションではありません）\n・びん・飲料かん・金属類・ペットボトルは月2回、品目ごとに透明袋に入れて資源物ステーションへ\n・ガラス・電球・コップなどの割れ物は紙で包み「われもの」と表記する",
+  disc:"川口市の公式サイトの案内と、まとめサイトの情報をもとにしています。割れ物が一般ごみなど、他の市と違う点に注意してください。確認できなかったゴミは出題から外しています。",
+  src:"https://www.city.kawaguchi.lg.jp/soshiki/01100/040/4/1/1946.html"},
+ kashiwa:{name:"柏市",pref:"千葉県",cats:["burn","nonburn","plastic","glass","can","pet","metal","paper"],
+  names:{plastic:"容器包装プラスチック類",glass:"空ビン類",can:"空カン類",pet:"ペットボトル（資源品）",metal:"金属類（資源品）",paper:"古紙類（資源品）"},
+  subs:{burn:"生ごみ・汚れが落ちないプラ・汚れやにおいのある紙など",nonburn:"陶器・ガラス・おもちゃ・傘・皮革以外の布製品など",plastic:"プラマークの容器包装（軽くすすぐ）",metal:"半分以上が金属のもの（なべ・フライパンなど）"},
+  over:{pan:"metal",toy:"nonburn",jar:"glass",can:"can",pet:"pet"},skip:["tissue","diaper","hashi","bulb","hanger","foam"],
+  notes:{
+   pizza:"宅配ピザの箱など、においや汚れがあるものはリサイクルできないため可燃ごみへ。",umb:"傘は不燃ごみです（皮革製品・衣類以外の布製品）。",
+   pan:"鍋・フライパンなど、半分以上が金属でできているものは資源品（金属類）です（3m・30kg以内）。",
+   dish:"ガラス・陶器製品は不燃ごみです。",vase:"植木鉢（陶器製）・ガラス製品は不燃ごみです。",glasscup:"ガラス製品は不燃ごみです。",cup:"陶器製品は不燃ごみです。",toy:"おもちゃは不燃ごみです。",
+   shampoo:"プラスチックボトルは使い切って中をすすぎ、容器包装プラスチック類へ。",detergent:"プラスチックボトルは使い切って中をすすぎ、容器包装プラスチック類へ。",
+   bento:"汚れが落ちないものは、プラマークが付いていても可燃ごみです。",
+   cap:"ペットボトルのふた・ラベルは外して、容器包装プラスチック類に出します。",label:"ペットボトルのふた・ラベルは外して、容器包装プラスチック類に出します。",
+   bag:"ポリ袋は容器包装プラスチック類です。",tray:"パックやトレーは軽くすすいで汚れを落とし、容器包装プラスチック類へ。",yogurt:"パックやカップは軽くすすいで汚れを落とし、容器包装プラスチック類へ。",
+   pet:"ペットボトルは容器包装プラスチック類ではなく資源品。水で軽くすすぎ、つぶして、専用の回収袋へ入れます。",
+   jar:"金属のふたは金属類、プラスチックのふたは容器包装プラスチック類。外せないふたはそのまま空ビンと一緒に出します。",can:"空カンは専用の回収袋へ。レジ袋は使わず直接入れます。",
+   milk:"紙パックは洗って開き、乾かして出します。中が銀色のものは可燃ごみです。"
+  },
+  tips:"・可燃ごみ（週2回）と容器包装プラスチック類（週1回）は、指定ごみ袋で出す\n・資源品（古紙・古着はひもで束ねる、ペットボトル・空ビン・空カンは専用の回収袋）は月2回\n・不燃ごみは月2回、有害ごみ（乾電池・蛍光管など）は月1回\n・朝8時30分までに決められた場所へ\n・この情報は柏地域のものです（沼南地域は一部ルールが異なります）",
+  disc:"柏市（柏地域）の公式ごみ分別早見表（令和8年4月発行）と、まとめサイトの情報をもとにしています。電球は種類で区分が変わるため出題から外しています。",
+  src:"https://www.city.kashiwa.lg.jp/documents/1467/r8kashiwa-guide.pdf"},
+ matsudo:{name:"松戸市",pref:"千葉県",cats:["burn","nonburn","plastic","glass","can","pet","paper"],
+  names:{plastic:"リサイクルするプラスチック",glass:"ビン類",can:"缶類",pet:"ペットボトル（店頭・集団回収）",paper:"資源ごみ（紙類・布類）"},
+  subs:{burn:"生ごみ・紙くず・汚れが落ちないプラ・皮革製品など",nonburn:"金属製品・陶磁器・ガラス製品・電球・傘・スプレー缶など",plastic:"プラマークの袋・トレイ・カップ・ボトル・キャップ・発泡スチロール"},
+  over:{jar:"glass",can:"can",pet:"pet"},skip:["tissue","diaper","hashi","pizza","toy","hanger"],
+  notes:{
+   dish:"陶磁器・ガラス製品は不燃ごみです。",vase:"陶磁器・ガラス製品は不燃ごみです。",glasscup:"陶磁器・ガラス製品は不燃ごみです。",cup:"陶磁器・ガラス製品は不燃ごみです。",
+   bulb:"電球は不燃ごみです（蛍光灯・蛍光管は有害ごみ）。",umb:"傘は不燃ごみです。",pan:"フライパンは不燃ごみです（金属製品）。",
+   shampoo:"プラマークの付いたボトルは、軽くすすいで汚れを落としてから「リサイクルするプラスチック」へ。",detergent:"プラマークの付いたボトルは、軽くすすいで汚れを落としてから「リサイクルするプラスチック」へ。",
+   bento:"食品残渣は水洗いし、汚れが落ちないものは可燃ごみです。",snack:"プラマークの付いた袋は「リサイクルするプラスチック」です。",
+   cap:"外したプラスチックのキャップ・ラベルは「リサイクルするプラスチック」へ。",label:"外したプラスチックのキャップ・ラベルは「リサイクルするプラスチック」へ。",foam:"発泡スチロールは「リサイクルするプラスチック」です。",
+   pet:"松戸市ではペットボトルは、店頭回収・市の回収ボックス・集団回収で出します（ステーション収集はありません）。キャップとラベルを外し、洗ってつぶします。",
+   can:"缶・ビン類は同じ袋に入れてよく、中を軽くすすぎます。飲食用に限ります。",jar:"飲食用のびんに限ります。割れたびんは不燃ごみです。",milk:"牛乳パックは紙類（資源ごみ）です。"
+  },
+  tips:"・可燃ごみ（週3回）は松戸市認定袋、不燃ごみ・有害ごみ・資源ごみは透明・半透明の袋で出す\n・容器包装プラ（週1回）は、中身が見える袋で（黒袋・認定袋は不可）。汚れが落ちないものは可燃ごみ\n・ペットボトルは収集がなく、店頭回収・回収ボックス・集団回収へ\n・朝8時30分までに出す（資源ごみは「紙類・布類」と「びん類・缶類」が毎週交互）",
+  disc:"松戸市の公式の家庭ごみ分別早見表と、まとめサイトの情報をもとにしています。ペットボトルを街角で集めない点など、他の市と違うところに注意してください。確認できなかったゴミは出題から外しています。",
+  src:"https://www.city.matsudo.chiba.jp/kurashi/gomi_shinyou/hayamihyou/ha-gyo.html"},
+ ichikawa:{name:"市川市",pref:"千葉県",cats:["burn","nonburn","plastic","glass","can","pet","paper"],
+  names:{plastic:"プラスチック製容器包装",glass:"ビン",can:"カン",paper:"紙類"},
+  subs:{burn:"生ごみ・貝殻・革製品・紙くず・おもちゃなどのプラ製品（プラマークがあっても）",nonburn:"金属・ガラス・食器・傘・スプレー缶・食用油や薬品のびん・缶など",plastic:"プラマークの容器包装（軽くすすぐ）"},
+  over:{toy:"burn",jar:"glass",can:"can",pet:"pet"},skip:["diaper","hashi","pizza","vase","bulb","pan","shampoo","detergent","foam","bag","tray","milk","hanger"],
+  notes:{
+   tissue:"紙くず（ティッシュなど）は燃やすごみです。",dish:"食器は燃やさないごみ。割れたものは紙などに包み「危険」と表示します。",
+   glasscup:"耐熱ガラス・クリスタルガラス・食器は燃やさないごみです。",cup:"食器は燃やさないごみです。",umb:"傘は燃やさないごみです。袋からはみ出してもかまいません。",
+   bento:"軽くすすいでも汚れや油分が落ちないものは燃やすごみです。",snack:"プラマークが付いている包装は、プラスチック製容器包装です。",yogurt:"プラマークが付いているカップは、中を軽くすすいでプラスチック製容器包装へ。",
+   cap:"ペットボトルのキャップとラベルは、プラ指定袋（プラスチック製容器包装）へ分けて出します。",label:"ペットボトルのキャップとラベルは、プラ指定袋（プラスチック製容器包装）へ分けて出します。",
+   toy:"容器包装ではないプラスチック製品（おもちゃなど）は、プラマークが付いていても燃やすごみです。",
+   pet:"本体は集積所のネット袋へ（指定袋は使いません）。キャップとラベルは外して、プラスチック製容器包装へ。",
+   can:"飲食料用・化粧品・飲み薬などのビン・カンに限ります。食用油・薬品・ペンキなどの缶は、燃やさないごみです。",canfood:"飲食料用の缶に限ります。食用油・薬品・ペンキなどの缶は、燃やさないごみです。",
+   jar:"耐熱ガラス・食器・乳白色のびん・食用油や薬品のびんは、燃やさないごみです。"
+  },
+  tips:"・燃やすごみ（週3回）・燃やさないごみ・プラスチック製容器包装は、市の指定袋で、午前8時までに集積所へ\n・ペットボトルは指定袋ではなく、集積所の収集用ネット袋へ\n・スプレー缶・カセットボンベは使い切って、燃やさないごみへ\n・プラスチック製品（おもちゃ・ハンガーなど）は、プラマークが付いていても燃やすごみ",
+  disc:"市川市の公式の分別ガイドブック（令和8年4月発行）と、まとめサイトの情報をもとにしています。プラスチック製品が燃やすごみなど、他の市と違う点に注意してください。確認できなかったゴミは出題から外しています。",
+  src:"https://www.city.ichikawa.lg.jp/page/2422.html"},
+ yokosuka:{name:"横須賀市",pref:"神奈川県",cats:["burn","nonburn","plastic","bottle","metal","paper"],
+  names:{burn:"燃せるごみ",nonburn:"不燃ごみ",plastic:"プラスチック資源",bottle:"缶・びん・ペットボトル",metal:"缶以外の金属（集団資源回収）",paper:"紙類（集団資源回収）"},
+  subs:{burn:"生ごみ・木・ゴム製品・混合素材の製品・プラ製品（容器包装以外）など",nonburn:"ガラス・陶磁器類・ライターなど",plastic:"プラマークの容器包装・発泡スチロール・非食品用のボトル",metal:"やかん・なべ・フライパン・針金ハンガーなど"},
+  over:{pan:"metal",hanger:"metal",toy:"burn"},skip:["diaper","umb","bulb","bag","tray","yogurt"],
+  notes:{
+   tissue:"書道に使った紙・絵の具のついた紙・食品がついた紙・ちり紙は燃せるごみです。",pizza:"食品がついた紙は燃せるごみです。",hashi:"木材は燃せるごみです。",
+   dish:"ガラス・陶磁器類は不燃ごみ。刃物や割れ物は新聞紙等で包み、危険である旨がわかるようにして出します。",
+   pan:"やかん・なべ・フライパンなどの調理器具は、集団資源回収の「缶以外の金属」です（フッ素樹脂加工・ホーロー製品も可）。",hanger:"針金のハンガーは、集団資源回収の「缶以外の金属」です。",
+   shampoo:"非食品用（洗剤・シャンプーなど）のボトルは、プラスチック資源です。",detergent:"非食品用（洗剤・シャンプーなど）のボトルは、プラスチック資源です。",
+   bento:"汚れが落ちないものは燃せるごみに出します。",
+   cap:"ペットボトルのラベルと、プラスチック製のふたは「プラスチック資源」へ。金属製のふたは「缶・びん・ペットボトル」の袋へ。",label:"ペットボトルのラベルと、プラスチック製のふたは「プラスチック資源」へ。",
+   foam:"発泡スチロールは、プラスチック資源です。",toy:"プラスチック製品（容器包装ではないもの）は燃せるごみです。",
+   pet:"中身を空にして軽くすすぎ、ラベルをはがし、ふたをはずして「缶・びん・ペットボトル」へ。2重袋にしないでください。",
+   jar:"割れているびんは、紙に包み「危険・びん」と書いて不燃ごみへ。リターナブルびんは酒販店へ返却を。",
+   milk:"紙パックは洗って開き、乾かして、ひもで十文字にしばります。内側が銀色や茶色のものは燃せるごみです。"
+  },
+  tips:"・燃せるごみ（週2回）は無色透明か白色半透明のポリ袋で。朝6時ごろから8時までに集積所へ\n・缶・びん・ペットボトルは週1回、2重袋にしない\n・紙類・缶以外の金属・布は、集団資源回収（町内会などの実施日）に出す\n・スプレー缶・カセットボンベは使い切って、穴はあけず「缶・びん・ペットボトル」へ",
+  disc:"横須賀市の公式のごみ分別検索・資源回収のページと、まとめサイトの情報をもとにしています。紙類や金属は町内会などの集団資源回収で出します。傘・電球は区分が複雑なため、出題から外しています。",
+  src:"https://www.city.yokosuka.kanagawa.jp/kurashi/gomi/kensaku/index.html"},
+ fujisawa:{name:"藤沢市",pref:"神奈川県",cats:["burn","nonburn","plastic","hazard","glass","can","pet","paper"],
+  names:{burn:"可燃ごみ",nonburn:"不燃ごみ",plastic:"プラスチック製容器包装",hazard:"危険ごみ・テープ類",glass:"ビン",can:"カン・なべ類",paper:"紙類（新聞・本・雑がみ・段ボール）"},
+  subs:{burn:"生ごみ・紙くず・ティッシュ・写真・感熱紙・木材（細いもの）・衣類・靴など",nonburn:"金属・ガラス・陶器製の食器・傘・刃物・電球（白熱球）など（長さ50cm未満）",plastic:"プラマークのポリ袋・ラップ・トレイ・カップ・ボトル・緩衝材・発泡スチロール"},
+  over:{pan:"can",jar:"glass",can:"can",pet:"pet"},skip:["pizza","vase","bulb","hanger","toy"],
+  notes:{
+   tissue:"ティッシュペーパー・感熱紙・防水加工紙（紙コップ・紙皿）などは可燃ごみです。",diaper:"紙おむつは、透明・半透明の袋でも出せます（可燃ごみの無料品目）。",hashi:"木材（太さ10cm未満・長さ50cm未満）は可燃ごみです。",
+   dish:"ガラス製・金属製・陶器製の食器類は不燃ごみ（長さ50cm未満）。割れたガラスは厚紙で包みます。",glasscup:"ガラス製・金属製・陶器製の食器類は不燃ごみです。",cup:"ガラス製・金属製・陶器製の食器類は不燃ごみです。",
+   umb:"傘は不燃ごみ。50cm以上でも、一部を指定袋に入れるか貼り付けて出せます。",
+   pan:"フライパン・なべ・やかんは「カン・なべ類」。戸建てはバケツなど、集合住宅は専用ネットかコンテナへ（袋に入れない）。",
+   shampoo:"ボトル類もプラマークのある容器包装です。汚れが落ちない物は可燃ごみです。",detergent:"ボトル類もプラマークのある容器包装です。汚れが落ちない物は可燃ごみです。",
+   bento:"汚れが落ちない物、中身が出せない物は可燃ごみです。",cap:"ペットボトルのキャップとラベルは、プラスチック製容器包装へ。",label:"ペットボトルのキャップとラベルは、プラスチック製容器包装へ。",
+   foam:"緩衝材・発泡スチロール類もプラスチック製容器包装です。",
+   pet:"キャップとラベルを外し、すすいで、できるだけつぶします。袋には入れず、戸建てはバケツ等、集合住宅は専用ネットかコンテナへ。",
+   can:"食品用・飲料用・酒類・菓子類の缶、なべ、やかん、フライパンは「カン・なべ類」。袋には入れません。",canfood:"食品用の缶は「カン・なべ類」。袋には入れません。",
+   jar:"ビンは食品用・飲料用・化粧品用（乳白色以外）です。",
+   milk:"紙パックは洗って切り開き、乾かして束ねます。内側がアルミのもの・茶色のパックは可燃ごみです。"
+  },
+  tips:"・可燃ごみ・不燃ごみは藤沢市指定収集袋（有料・ピンクの共通袋）、プラスチック製容器包装は透明・半透明の袋で出す\n・ビン（週2回、可燃ごみと同じ日）・カン・なべ類・ペットボトル（月2回）は、袋に入れず、戸建てはバケツなどの容器、集合住宅は専用ネットかコンテナへ\n・乾電池・蛍光管・充電式小型家電は「危険ごみ・テープ類」（週1回）\n・収集日の朝8時までに出す",
+  disc:"藤沢市の公式サイトの分け方・出し方のページと、まとめサイトの情報をもとにしています。電球は種類で区分が変わる、おもちゃは「商品プラスチック」に当たるなど複雑なものは出題から外しています。",
+  src:"https://www.city.fujisawa.kanagawa.jp/kankyo-j/kurashi/gomi/wakekata/dasikata/purayou.html"},
+ koshigaya:{name:"越谷市",pref:"埼玉県",cats:["burn","nonburn","hazard","glass","can","pet","paper"],
+  names:{burn:"燃えるごみ",nonburn:"燃えないごみ",hazard:"危険ごみ",glass:"びん",can:"缶",paper:"古紙類"},
+  subs:{burn:"生ごみ・プラスチック製品・ビニール類・発泡スチロール・ゴム・皮革・50cm未満のもの",nonburn:"ガラス製品・金属類・せともの類・包丁・掃除機など",hazard:"スプレー缶・カセットボンベ・乾電池・蛍光管・電球・ライターなど"},
+  over:{shampoo:"burn",detergent:"burn",bento:"burn",snack:"burn",cap:"burn",label:"burn",foam:"burn",bag:"burn",tray:"burn",yogurt:"burn",toy:"burn",bulb:"hazard",jar:"glass",can:"can",pet:"pet"},
+  skip:["diaper","hashi","umb","hanger"],
+  notes:{
+   tissue:"汚れが落ちない紙、においがついた紙は、古紙ではなく燃えるごみです。",pizza:"汚れが落ちない紙、においがついた紙は、古紙ではなく燃えるごみです。",
+   dish:"ガラス製品・せともの類は燃えないごみ（黄色のかごに入れます）。割れたものも出せます。",vase:"せともの類は燃えないごみ（黄色のかごに入れます）。",
+   glasscup:"ガラス食器は、びんではなく燃えないごみです。",cup:"せともの類は燃えないごみです。",pan:"金属類は燃えないごみです（黄色のかご）。",
+   bulb:"電球は危険ごみ。赤色のかごに入れます。",
+   shampoo:"洗剤等の容器（紙・プラスチック製）は燃えるごみです。",detergent:"洗剤等の容器（紙・プラスチック製）は燃えるごみです。",
+   bento:"プラスチック製品は燃えるごみです（50cm未満）。",snack:"ビニール類は燃えるごみです。",bag:"ビニール類は燃えるごみです。",tray:"プラスチック製品は燃えるごみです。",yogurt:"プラスチック製品は燃えるごみです。",
+   cap:"ペットボトルのキャップとラベルは、「燃えるごみ」の日に出します。",label:"ペットボトルのキャップとラベルは、「燃えるごみ」の日に出します。",
+   foam:"発泡スチロールは燃えるごみです。",toy:"プラスチック製品は燃えるごみです。",
+   pet:"無色透明なものに限ります。キャップとラベルを外し、すすいで、つぶして、黄色のかごへ。",
+   jar:"飲料・酒・しょうゆなどのびん。割れたびんも出せます。中身を空にして、キャップを外し、青色のかごへ。キャップは、金属製は燃えないごみ、プラスチック製は燃えるごみです。",
+   can:"缶は中を空にして、すすいでから黄色のかごへ。汚れの落ちない缶は燃えないごみ、スプレー缶・カセットボンベは危険ごみです。",
+   milk:"紙パックは洗って、乾かして、ひもでしばります。内側が加工された紙パックは燃えるごみです。"
+  },
+  tips:"・燃えるごみは透明または半透明の袋に入れて、50cm未満のものを出す\n・燃えないごみ・缶・ペットボトルは黄色のかご、びんは青色のかご、危険ごみは赤色のかごへ\n・古紙類は品目ごとにひもでしばる（紙以外は取り除く）\n・収集日の朝8時までに集積所へ",
+  disc:"越谷市の公式サイトの案内と、まとめサイトの情報をもとにしています。プラスチックを資源として集めない市なので、他の市と区分が違います。確認できなかったゴミは出題から外しています。",
+  src:"https://www.city.koshigaya.saitama.jp/kurashi_shisei/kurashi/gomi_recycle/kateigomi/wakekatadashikata.html"}
 };
 var CNT={"調布":74,"杉並":73,"府中":66,"三鷹":65,"小金井":60,"武蔵野":40,"西東京":36,"練馬":30,"世田谷":26,"八王子":22,"国分寺":21,"小平":15,"日野":15,"中野":15,"立川":13,"東村山":11,"新宿":7,"稲城":7,"東久留米":6,"昭島":6,"国立":6,"東大和":6,"福生":5,"狛江":4,"港":4,"町田":3,"多摩":3,"清瀬":2,"目黒":2,"板橋":2,"あきる野":2,"江東":2,"武蔵村山":2,"青梅":2,"羽村":1,"千代田":1,"墨田":1,"北":1,"渋谷":1,"品川":1,"足立":1,"江戸川":1};
 function cnt(n){return CNT[n.replace(/[市区町村]$/,"")]||0}
@@ -1324,8 +1553,8 @@ function lookup(){var ct=city();return BASE.filter(function(it){return ct.cats.i
 var UNVTXT="この地域の公式案内では確認できていないため、一般的な目安です。自治体の分別辞典で確認してください。";
 function srcLink(ct){return ct.src?'<p><a href="'+ct.src+'" target="_blank" rel="noopener">'+esc(ct.name)+'の公式サイトで確認</a></p>':''}
 function answerHTML(ct,it,extra){var cat=itemCat(ct,it),bad=unv(ct,it);
-  return '<b>'+it.e+' '+esc(it.n)+'</b>'+(bad?'<p class="warn">⚠️ '+UNVTXT+'</p>':'')+'<p>'+(bad?'一般的な目安：':'分別先：')+'<strong>'+esc(cname(ct,cat))+'</strong></p><p>'+esc(bad?it.x:itemNote(ct,it))+'</p>'+(extra||'')+recycleHTML(ct,it,cat)+srcLink(ct)}
-function badge(){var ct=city();return ct.user?"✏️ あなたが追加したルールです":ct.src?"✅ 公式サイトの情報をもとに作成（確認できない品目は「未確認」と表示）":"ℹ️ 一般的なルールです"}
+  return '<b>'+it.e+' '+esc(it.n)+'</b>'+(bad?'<p class="warn">'+ic("alert")+' '+UNVTXT+'</p>':'')+'<p>'+(bad?'一般的な目安：':'分別先：')+'<strong>'+esc(cname(ct,cat))+'</strong></p><p>'+esc(bad?it.x:itemNote(ct,it))+'</p>'+(extra||'')+recycleHTML(ct,it,cat)+srcLink(ct)}
+function badge(){var ct=city();return ct.user?" あなたが追加したルールです":ct.src?" 公式サイトの情報をもとに作成（確認できない品目は「未確認」と表示）":" 一般的なルールです"}
 function show(id){["modeMenu","photo","roadmap","start","edit","notes","play","end"].forEach(function(s){$(s).hidden=s!==id});window.scrollTo(0,0)}
 function opt(k){return '<option value="'+k+'"'+(k===cur?" selected":"")+'>'+esc(CITIES[k].name)+'</option>'}
 function fillSel(){
@@ -1343,7 +1572,7 @@ function fillSel(){
 }
 function home(){
   var ct=city();fillSel();applyKid();
-  $("guide").innerHTML=ct.cats.map(function(id){var c=CATS[id];return '<div style="--col:'+c.col+'"><b>'+c.ico+' '+esc(cn(ct,id))+'</b>'+(ct.user?'':'<br><span class="sub">'+kd((ct.subs&&ct.subs[id])||c.sub)+'</span>')+(isRes(id)?'<br><span class="sub">♻️ '+(kidMode?'しげん → ':'資源 → ')+esc(kidMode?RECY[id].tok:RECY[id].to)+'</span>':'')+'</div>'}).join("");
+  $("guide").innerHTML=ct.cats.map(function(id){var c=CATS[id];return '<div style="--col:'+c.col+'"><b>'+c.ico+' '+esc(cn(ct,id))+'</b>'+(ct.user?'':'<br><span class="sub">'+kd((ct.subs&&ct.subs[id])||c.sub)+'</span>')+(isRes(id)?'<br><span class="sub">'+ic("recycle")+' '+(kidMode?'しげん → ':'資源 → ')+esc(kidMode?RECY[id].tok:RECY[id].to)+'</span>':'')+'</div>'}).join("");
   $("tips").hidden=!ct.tips;$("tips").textContent=ct.tips||"";
   $("disc").textContent=ct.disc||(ct.user?"あなたが追加した区分で出題します。":"");
   var a=$("src");a.hidden=!ct.src;if(ct.src)a.href=ct.src;
@@ -1394,7 +1623,7 @@ function saveUsers(){try{localStorage.setItem("gomi-user-cities",JSON.stringify(
 /* 分別を調べる（検索中心・写真は補助） */
 var ALIAS={pet:"ペットボトル お茶 ジュース",can:"空き缶 ジュース缶",jar:"ガラス瓶 ビン 瓶 ジャム",milk:"紙パック 牛乳パック ぎゅうにゅう",tissue:"ティッシュ 鼻をかんだ",diaper:"おむつ オムツ",bag:"ビニール袋 レジ袋 ポリ袋",tray:"発泡トレー スーパー トレイ 肉 魚",foam:"スチロール 緩衝材 発泡",hashi:"箸 割り箸 わりばし",umb:"傘 壊れた傘 かさ",pan:"鍋 なべ 調理器具",bulb:"電球 LED 蛍光灯 ライト",dish:"皿 茶碗 食器 お皿",news:"新聞 しんぶん",box:"ダンボール 段ボール 箱",mag:"本 雑誌 ざっし",banana:"バナナ 皮 生ごみ",coffee:"コーヒー 出がら 粉",tea:"茶殻 お茶 出がらし",teabag:"紅茶 ティーパック",toy:"玩具 おもちゃ ブロック",hanger:"ハンガー 洋服 針金",envelope:"封筒 窓付き",copypaper:"コピー 紙 プリント",notebook:"ノート 帳面",flyer:"チラシ 広告",catalog:"パンフレット カタログ 冊子",wine:"ワイン 瓶",beer:"ビール 缶 アルミ",canfood:"缶詰 ツナ缶",soy:"醤油 しょうゆ 調味料 瓶",cap:"ふた キャップ 蓋",label:"ラベル フィルム"};
 function norm(s){return String(s||"").replace(/\s/g,"").toLowerCase().replace(/[ァ-ヶ]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-96)})}
-var GROUPS=[["all","すべて",null],["food","🍌 食べ物",["food"]],["paper","📄 紙",["dirtypaper","printed","boxes","milk","office"]],["plastic","🛍️ プラ",["bottle","capl","plasticgoods","bags","cont"]],["hard","🍽️ かたいもの",["crock","metal","bulb"]],["drink","🥤 びん・缶・PET",["glass","can","pet"]],["wood","🪵 木",["wood"]]];
+var GROUPS=[["all","すべて",null],["food"," 食べ物",["food"]],["paper"," 紙",["dirtypaper","printed","boxes","milk","office"]],["plastic"," プラ",["bottle","capl","plasticgoods","bags","cont"]],["hard"," かたいもの",["crock","metal","bulb"]],["drink"," びん・缶・PET",["glass","can","pet"]],["wood"," 木",["wood"]]];
 var sGroup="all",sLast=null;
 function groupItems(g){if(g==="all")return null;var ids={};GROUPS.forEach(function(x){if(x[0]===g)x[2].forEach(function(k){LEAF[k].items.forEach(function(i){ids[i]=1})})});return ids}
 function recent(){try{return JSON.parse(localStorage.getItem("gomi-recent")||"[]")}catch(e){return[]}}
@@ -1412,7 +1641,7 @@ function fillPhotoItems(){
   $("photoRecent").innerHTML=rc.length?'<span class="sub">最近調べたもの：</span>'+rc.map(function(it){return '<button class="chip" data-i="'+it.id+'">'+it.e+' '+esc(it.n)+'</button>'}).join(""):"";
   Array.prototype.forEach.call($("photoRecent").querySelectorAll("button"),function(b){b.onclick=function(){showPhoto(b.dataset.i)}});
   $("photoCount").textContent=list.length+"件"+(k?"（検索結果）":"");
-  box.innerHTML=list.length?list.map(function(o){var it=o.it,bad=unv(ct,it);return '<button class="srow" data-i="'+it.id+'"><span class="ico">'+it.e+'</span><span>'+esc(it.n)+(bad?' <small>（未確認）</small>':'')+'</span><span class="pill">'+esc(cn(ct,itemCat(ct,it)))+'</span></button>'}).join(""):'<div class="empty"><p>見つかりませんでした。ひらがな・カタカナ・別の言い方でも試してみてください。</p><button class="btn ghost" id="toRoad">🧭 分別さがしナビで絞り込む</button></div>';
+  box.innerHTML=list.length?list.map(function(o){var it=o.it,bad=unv(ct,it);return '<button class="srow" data-i="'+it.id+'"><span class="ico">'+it.e+'</span><span>'+esc(it.n)+(bad?' <small>（未確認）</small>':'')+'</span><span class="pill">'+esc(cn(ct,itemCat(ct,it)))+'</span></button>'}).join(""):'<div class="empty"><p>見つかりませんでした。ひらがな・カタカナ・別の言い方でも試してみてください。</p><button class="btn ghost" id="toRoad"> 分別さがしナビで絞り込む</button></div>';
   Array.prototype.forEach.call(box.querySelectorAll(".srow"),function(b){b.onclick=function(){showPhoto(b.dataset.i)}});
   var tr=$("toRoad");if(tr)tr.onclick=startRoadmap;
   if(k&&list.length===1&&list[0].sc>=2)showPhoto(list[0].it.id,true);else if(!sLast)$("photoResult").hidden=true;
@@ -1426,33 +1655,33 @@ $("photoBack").onclick=showMenu;
 /* 分別さがしナビ：大きなくくり → だんだん具体的に絞り込む */
 var ROAD={
  start:{q:"それは、何でできていますか？（いちばん近いものを選んでください）",o:[
-  ["🍌","食べ物・生きもの（皮・かす・骨など）","L:food"],
-  ["📄","紙・紙製品","paper"],
-  ["🛍️","プラスチック・ビニール・発泡スチロール","plastic"],
-  ["🍽️","ガラス・陶器・金属・電球など、かたいもの","hard"],
-  ["🥤","飲み物・食品の「びん・缶・ペットボトル」","drink"],
-  ["🪵","木のもの","L:wood"],
-  ["❓","どれにも当てはまらない","SEARCH"]]},
+  ["leaf","食べ物・生きもの（皮・かす・骨など）","L:food"],
+  ["file","紙・紙製品","paper"],
+  ["bag","プラスチック・ビニール・発泡スチロール","plastic"],
+  ["cube","ガラス・陶器・金属・電球など、かたいもの","hard"],
+  ["bottle","飲み物・食品の「びん・缶・ペットボトル」","drink"],
+  ["log","木のもの","L:wood"],
+  ["search","どれにも当てはまらない","SEARCH"]]},
  paper:{q:"どんな紙ですか？",o:[
-  ["🤧","使い終わった・汚れた紙（ティッシュ・おむつ・油や食べ物の汚れ）","L:dirtypaper"],
-  ["📰","新聞・チラシ・雑誌・カタログ","L:printed"],
-  ["📦","段ボール・紙箱","L:boxes"],
-  ["🥛","牛乳などの紙パック","L:milk"],
-  ["📃","コピー用紙・封筒・ノート","L:office"]]},
+  ["","使い終わった・汚れた紙（ティッシュ・おむつ・油や食べ物の汚れ）","L:dirtypaper"],
+  ["","新聞・チラシ・雑誌・カタログ","L:printed"],
+  ["","段ボール・紙箱","L:boxes"],
+  ["","牛乳などの紙パック","L:milk"],
+  ["","コピー用紙・封筒・ノート","L:office"]]},
  plastic:{q:"何に使われていましたか？",o:[
-  ["🍬","食べ物・飲み物の袋や容器","plasticfood"],
-  ["🧴","シャンプー・洗剤などのボトル・詰め替え","L:bottle"],
-  ["🧢","ペットボトルのキャップ・ラベル","L:capl"],
-  ["🧸","おもちゃ・緩衝材など（容器ではないもの）","L:plasticgoods"]]},
+  ["","食べ物・飲み物の袋や容器","plasticfood"],
+  ["","シャンプー・洗剤などのボトル・詰め替え","L:bottle"],
+  ["","ペットボトルのキャップ・ラベル","L:capl"],
+  ["","おもちゃ・緩衝材など（容器ではないもの）","L:plasticgoods"]]},
  plasticfood:{q:"どれに近いですか？",o:[
-  ["🍬","お菓子の袋・レジ袋","L:bags"],
-  ["🍱","弁当・ヨーグルト・食品トレーなどの容器","L:cont"]]},
+  ["","お菓子の袋・レジ袋","L:bags"],
+  ["","弁当・ヨーグルト・食品トレーなどの容器","L:cont"]]},
  hard:{q:"どんなものですか？",o:[
-  ["🍽️","食器・コップ・花瓶（割れ物）","L:crock"],
-  ["🍳","傘・フライパン・ハンガーなどの金属製品","L:metal"],
-  ["💡","電球","L:bulb"]]},
+  ["cube","食器・コップ・花瓶（割れ物）","L:crock"],
+  ["","傘・フライパン・ハンガーなどの金属製品","L:metal"],
+  ["","電球","L:bulb"]]},
  drink:{q:"入れものの種類は？",o:[
-  ["🍾","ガラスのびん","L:glass"],["🥫","金属の缶","L:can"],["🥤","ペットボトル本体","L:pet"]]}
+  ["","ガラスのびん","L:glass"],["","金属の缶","L:can"],["bottle","ペットボトル本体","L:pet"]]}
 };
 var LEAF={
  food:{label:"食べ物のかす・生きもの",items:["banana","apple","orange","vegpeel","fishbone","eggshell","coffee","tea","teabag"],tip:"水気をよく切ってから出すと、においや汚れを防げます。"},
@@ -1482,7 +1711,7 @@ function renderRoad(){
   $("roadProgress").textContent="質問 "+roadHist.length+"：大きなくくりから、だんだん絞り込みます。";
   $("roadTrail").textContent=roadTrail.length?"これまで："+roadTrail.map(kd).join(" › "):"";
   $("roadQuestion").textContent=kd(n.q);
-  $("roadOpts").innerHTML=n.o.map(function(o,i){return '<button class="road-opt" data-i="'+i+'"><span class="ico">'+o[0]+'</span><span>'+esc(kd(o[1]))+'</span></button>'}).join("");
+  $("roadOpts").innerHTML=n.o.map(function(o,i){return '<button class="road-opt" data-i="'+i+'">'+(o[0]?'<span class="ico">'+ic(o[0])+'</span>':'')+'<span>'+esc(kd(o[1]))+'</span></button>'}).join("");
   Array.prototype.forEach.call($("roadOpts").children,function(b){b.onclick=function(){roadPick(ROAD[roadHist[roadHist.length-1]].o[Number(b.dataset.i)])}});
 }
 function roadPick(o){
@@ -1497,9 +1726,9 @@ function showLeaf(key){
   $("roadBox").hidden=true;$("roadProgress").textContent="判定結果："+ct.name+"のルール";$("roadTrail").textContent="これまで："+roadTrail.map(kd).join(" › ");
   if(!items.length){res.innerHTML='<b>'+esc(kd(leaf.label))+'</b><p>この地域の区分では、該当する品目を案内できません。品目名で探すか、公式の分別辞典で確認してください。</p>'+srcLink(ct);res.hidden=false;return}
   var cats={};items.forEach(function(it){cats[itemCat(ct,it)]=1});var same=Object.keys(cats).length===1,anyUnv=items.some(function(it){return unv(ct,it)});
-  var head=same&&!anyUnv?'<p>✅ この仲間は、すべて<strong>「'+esc(cn(ct,Object.keys(cats)[0]))+'」</strong>です。</p>':same?'<p>この仲間は一般的に<strong>「'+esc(cn(ct,Object.keys(cats)[0]))+'」</strong>ですが、一部は未確認です。</p>':'<p>⚠️ <strong>品目によって分別先が変わります。</strong>下の一覧で、いちばん近いものを確認してください。</p>';
+  var head=same&&!anyUnv?'<p>'+ic("check")+' この仲間は、すべて<strong>「'+esc(cn(ct,Object.keys(cats)[0]))+'」</strong>です。</p>':same?'<p>この仲間は一般的に<strong>「'+esc(cn(ct,Object.keys(cats)[0]))+'」</strong>ですが、一部は未確認です。</p>':'<p>'+ic("alert")+' <strong>品目によって分別先が変わります。</strong>下の一覧で、いちばん近いものを確認してください。</p>';
   var rows=items.map(function(it){var bad=unv(ct,it),cat=itemCat(ct,it);return '<div class="road-row"><span>'+it.e+' '+esc(it.n)+(bad?' <small>（未確認）</small>':'')+'</span><span class="pill">'+esc(cn(ct,cat))+'</span><small>'+esc(bad?"一般的な目安です。":itemNote(ct,it))+'</small></div>'}).join("");
-  res.innerHTML='<b>'+esc(kd(leaf.label))+'</b>'+head+rows+recLeaf(ct,items)+'<p><small>💡 '+esc(leaf.tip)+'</small></p><p><small>'+(ct.src?'出典：'+esc(ct.name)+'の公式サイトの案内':'一般的なルールです')+'。品目の状態（汚れ・大きさ）で変わることがあります。</small></p>'+srcLink(ct);
+  res.innerHTML='<b>'+esc(kd(leaf.label))+'</b>'+head+rows+recLeaf(ct,items)+'<p><small>'+ic("info")+' '+esc(leaf.tip)+'</small></p><p><small>'+(ct.src?'出典：'+esc(ct.name)+'の公式サイトの案内':'一般的なルールです')+'。品目の状態（汚れ・大きさ）で変わることがあります。</small></p>'+srcLink(ct);
   res.hidden=false;
 }
 $("roadUndo").onclick=function(){
@@ -1510,8 +1739,8 @@ $("roadRestart").onclick=startRoadmap;$("roadSearch").onclick=function(){fillPho
 
 /* game */
 var N=15,q=[],idx=0,score=0,miss=[],locked=false,tries=0,streak=0,best=0,modalOpen=false;
-function updBar(){$("sc").innerHTML="⭐ "+score+(streak>=2?' <span class="streak">🔥'+streak+'</span>':"")}
-function burst(el){if(!el||!el.animate||(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches))return;var r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,em=["✨","⭐","🎉","💫"];for(var i=0;i<8;i++){var s=document.createElement("span");s.className="burst";s.textContent=em[i%4];s.style.left=cx+"px";s.style.top=cy+"px";document.body.appendChild(s);var a=i/8*Math.PI*2,d=50+Math.random()*30;s.animate([{transform:"translate(-50%,-50%) scale(.4)",opacity:1},{transform:"translate(calc(-50% + "+Math.cos(a)*d+"px),calc(-50% + "+Math.sin(a)*d+"px)) scale(1.1)",opacity:0}],{duration:650,easing:"ease-out"}).onfinish=(function(n){return function(){n.remove()}})(s)}}
+function updBar(){$("sc").innerHTML="得点 "+score+(streak>=2?' <span class="streak">連続 '+streak+'</span>':"")}
+function burst(el){if(!el||!el.animate||(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches))return;var r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;for(var i=0;i<8;i++){var s=document.createElement("span");s.className="burst";s.style.left=cx+"px";s.style.top=cy+"px";s.style.background=i%2?"var(--accent)":"var(--main)";document.body.appendChild(s);var a=i/8*Math.PI*2,d=44+Math.random()*26;s.animate([{transform:"translate(-50%,-50%) scale(1)",opacity:1},{transform:"translate(calc(-50% + "+Math.cos(a)*d+"px),calc(-50% + "+Math.sin(a)*d+"px)) scale(.4)",opacity:0}],{duration:520,easing:"ease-out"}).onfinish=(function(n){return function(){n.remove()}})(s)}}
 function easyCats(ct,it){var r=itemCat(ct,it);if($("level").value!=="easy"||ct.cats.length<=3)return ct.cats;var o=shuffle(ct.cats.filter(function(c){return c!==r})).slice(0,2);return shuffle([r].concat(o))}
 $("level").value=kidMode?"easy":"normal";
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
@@ -1542,7 +1771,7 @@ function render(){
       b.style.setProperty("--x",pos[0]+"%");b.style.setProperty("--y",pos[1]+"%");
       b.setAttribute("aria-label",cn(ct,id)+"へ分別");
     }
-    b.innerHTML='<span class="ico">'+c.ico+'</span><span>'+esc(cn(ct,id))+'</span>'+(isRes(id)?'<i class="resb" title="資源（リサイクル）">♻️</i>':'');
+    b.innerHTML='<span class="ico">'+c.ico+'</span><span>'+esc(cn(ct,id))+'</span>'+(isRes(id)?'<i class="resb" title="資源（リサイクル）">'+ic("recycle")+'</i>':'');
     b.onclick=function(){answer(id)};box.appendChild(b);
   });
 }
@@ -1587,14 +1816,14 @@ function finish(){
   var ct=city(),pct=Math.round(score/N*100),stars=pct>=90?3:pct>=60?2:score>0?1:0;
   show("end");$("endCity").textContent=ct.name+"のルール（まちがいはノートに自動で記録されます）";$("final").textContent=score+" / "+N;
   $("pct").textContent="正答率 "+pct+"%";$("ring").style.setProperty("--p",pct);
-  $("stars").textContent="⭐".repeat(stars)+"☆".repeat(3-stars);
+  $("stars").textContent="★".repeat(stars)+"☆".repeat(3-stars);
   $("rank").textContent=kidMode?(pct===100?"分別マスター！全問正解！":pct>=80?"よくできました！あと少しで満点！":pct>=50?"いい調子！間違えた問題を復習しよう。":"もう一度挑戦してみよう。"):(pct===100?"ゴミ分別マスター！完ぺきです。":pct>=80?"とても良い！あと少しで満点。":pct>=50?"まずまず。まちがえた項目を復習しよう。":"ここから伸びしろたっぷり。もう一度挑戦しよう。");
   $("stats").innerHTML='<div><b>'+score+'</b><small>正解</small></div><div><b>'+miss.length+'</b><small>まちがい</small></div><div><b>'+best+'</b><small>最高連続</small></div>';
   $("missWrap").hidden=miss.length===0;$("retryMiss").hidden=miss.length===0;recap();
   $("miss").innerHTML=miss.map(function(m){return "<li>"+m.e+" <b>"+esc(kidMode?KID[m.id][0]:m.n)+"</b> → "+esc(cn(ct,itemCat(ct,m)))+"<br><span class='sub'>"+esc(itemNote(ct,m))+"</span></li>"}).join("");
 }
 $("retryMiss").onclick=function(){var m=miss.slice();if(!m.length)return;q=shuffle(m);N=q.length;idx=0;score=0;miss=[];streak=0;best=0;show("play");render()};
-/* ♻️ リサイクルを学ぶ */
+/*  リサイクルを学ぶ */
 var RECY={
  pet:{fact:"ペットボトルは、洗って集められ、衣類やカーペットなどの繊維、新しいボトルなどに生まれ変わります。",factk:"ペットボトルは、ふくや カーペット、あたらしいボトルに うまれかわるよ。",to:"衣類・カーペットなどの繊維や、新しいボトル",tok:"ふくや カーペット、あたらしいボトル",prep:"中をすすぐ（キャップ・ラベルは市のルールに合わせて外す）",prepk:"なかを すすごうね"},
  can:{fact:"缶は溶かして、新しい缶や金属製品の材料になります。アルミ缶は、何度でも缶に生まれ変わります。",factk:"かんは とかして、あたらしい かんや きんぞくせいひんに なるよ。",to:"新しい缶や金属製品",tok:"あたらしい かんや きんぞくの せいひん",prep:"中を軽くすすぐ",prepk:"なかを かるく すすごう"},
@@ -1603,9 +1832,9 @@ var RECY={
  paper:{fact:"古紙は、再生紙・段ボール・トイレットペーパーなどに生まれ変わります。",factk:"ふるがみは、さいせいし・だんボール・トイレットペーパーに なるよ。",to:"再生紙・段ボール・トイレットペーパー",tok:"さいせいし・だんボール・トイレットペーパー",prep:"種類ごとにまとめ、ひもでしばる（ぬらさない）",prepk:"しゅるいごとに ひもで しばろう"},
  plastic:{fact:"プラスチックは集められて、新しいプラスチック製品や、化学原料などに生まれ変わります。",factk:"プラスチックは あつめて、あたらしい プラスチックせいひんに なるよ。",to:"新しいプラスチック製品や原料",tok:"あたらしい プラスチックせいひん",prep:"軽くすすぐ（汚れが落ちないものは資源にならない市もあります）",prepk:"かるく すすごう"},
  metal:{fact:"金属は溶かして、また金属製品の材料になります。",factk:"きんぞくは とかして、また きんぞくの せいひんに なるよ。",to:"金属製品の材料",tok:"きんぞくの ざいりょう",prep:"金属以外の部分は取り除く",prepk:"きんぞく いがいの ぶぶんは とろう"},
- burn:{fact:"🌱 資源にできるものが混ざっていないか、出す前にもう一度確認しましょう。燃やすごみは焼却され、熱を発電や温水に使う清掃工場もあります。",factk:"🌱 しげんに なるものが まざっていないか、もういちど みてみよう。"},
- nonburn:{fact:"🌱 燃やさないごみは、破砕して金属などを取り出し、リサイクルしている自治体もあります。資源に分けられるものは、混ぜずに出しましょう。",factk:"🌱 もやさない ごみは、こなごなに して きんぞくを とりだす まちも あるよ。"},
- hazard:{fact:"🌱 電池や蛍光管などは、専用の回収で、含まれる金属などを取り出してリサイクルされます。他のごみと分けて出しましょう。",factk:"🌱 でんちや けいこうかんは、べつに して だそうね。"}
+ burn:{fact:" 資源にできるものが混ざっていないか、出す前にもう一度確認しましょう。燃やすごみは焼却され、熱を発電や温水に使う清掃工場もあります。",factk:" しげんに なるものが まざっていないか、もういちど みてみよう。"},
+ nonburn:{fact:" 燃やさないごみは、破砕して金属などを取り出し、リサイクルしている自治体もあります。資源に分けられるものは、混ぜずに出しましょう。",factk:" もやさない ごみは、こなごなに して きんぞくを とりだす まちも あるよ。"},
+ hazard:{fact:" 電池や蛍光管などは、専用の回収で、含まれる金属などを取り出してリサイクルされます。他のごみと分けて出しましょう。",factk:" でんちや けいこうかんは、べつに して だそうね。"}
 };
 var FUN={cap:"キャップは本体と素材が違うので、外して分けるとリサイクルしやすくなります。",label:"ラベルは本体と素材が違うので、外して分けるとリサイクルしやすくなります。",milk:"牛乳パックは、洗って開いて乾かすと、トイレットペーパーなどに生まれ変わります。",news:"新聞紙は、新しい新聞紙やトイレットペーパーなどに生まれ変わります。",box:"段ボールは、くり返し段ボールに生まれ変わります。"};
 var FUNK={cap:"キャップと ほんたいは ざいりょうが ちがうから、わけると リサイクルしやすいよ。",label:"ラベルと ほんたいは ざいりょうが ちがうから、わけると リサイクルしやすいよ。",milk:"ぎゅうにゅうパックは、あらって ひらいて かわかすと、トイレットペーパーに なるよ。",news:"しんぶんしは、あたらしい しんぶんしや トイレットペーパーに なるよ。",box:"だんボールは、なんども だんボールに うまれかわるよ。"};
@@ -1614,7 +1843,7 @@ function recycleHTML(ct,it,cat){
   var r=RECY[cat];if(!r)return "";
   if(isRes(cat)){
     var f=kidMode?(FUNK[it.id]||r.factk):(FUN[it.id]||r.fact);
-    return '<div class="recy">♻️ <b>'+(kidMode?'しげんごみだよ！ リサイクルしよう':'資源ごみです。リサイクルしましょう')+'</b><br>'+esc(f)+'<br><small>'+(kidMode?'うまれかわり：':'生まれ変わり：')+esc(kidMode?r.tok:r.to)+'　／　'+(kidMode?'だすまえに：':'出す前に：')+esc(kidMode?r.prepk:r.prep)+'</small></div>';
+    return '<div class="recy">'+ic("recycle")+' <b>'+(kidMode?'しげんごみだよ！ リサイクルしよう':'資源ごみです。リサイクルしましょう')+'</b><br>'+esc(f)+'<br><small>'+(kidMode?'うまれかわり：':'生まれ変わり：')+esc(kidMode?r.tok:r.to)+'　／　'+(kidMode?'だすまえに：':'出す前に：')+esc(kidMode?r.prepk:r.prep)+'</small></div>';
   }
   return '<div class="recy nr">'+esc(kidMode?r.factk:r.fact)+'</div>';
 }
@@ -1623,7 +1852,7 @@ var seen=[];
 function recap(){var ct=city(),g={};seen.forEach(function(it){var c=itemCat(ct,it);if(isRes(c)){(g[c]=g[c]||[]).push(it)}});var ks=Object.keys(g),box=$("recapRes");
   if(!ks.length){box.hidden=true;return}
   box.hidden=false;box.className="recy";
-  box.innerHTML='<b>♻️ '+(kidMode?'きょう であった しげんごみ':'今回の資源ごみ')+'</b>'+ks.map(function(c){var r=RECY[c],em=g[c].map(function(it){return it.e}).filter(function(e,i,x){return x.indexOf(e)===i}).join(" ");return '<div>'+CATS[c].ico+' '+esc(cn(ct,c))+'　'+em+'<br><small>→ '+esc(kidMode?r.tok:r.to)+'</small></div>'}).join("");
+  box.innerHTML='<b>'+ic("recycle")+' '+(kidMode?'きょう であった しげんごみ':'今回の資源ごみ')+'</b>'+ks.map(function(c){var r=RECY[c],em=g[c].map(function(it){return it.e}).filter(function(e,i,x){return x.indexOf(e)===i}).join(" ");return '<div>'+CATS[c].ico+' '+esc(cn(ct,c))+'　'+em+'<br><small>→ '+esc(kidMode?r.tok:r.to)+'</small></div>'}).join("");
 }
 /* まちがい記録（この端末のブラウザ内だけに保存） */
 var MKEY="gomi-mistakes-v1";
@@ -1659,7 +1888,7 @@ $("qResult").onclick=function(){closeQuit();N=doneCount();finish()};
 $("qExit").onclick=function(){closeQuit();showMenu()};
 $("quitModal").onclick=function(e){if(e.target===this)closeQuit()};
 function openPeek(){if(modalOpen)return;modalOpen=true;var ct=city(),cur0=(q[idx]&&!locked)?q[idx].id:"",its=lookup().filter(function(it){return !unv(ct,it)&&it.id!==cur0});
-  $("peekBody").innerHTML=ct.cats.map(function(id){var ex=its.filter(function(it){return itemCat(ct,it)===id}).slice(0,8).map(function(it){return it.e}).join(" ");return '<div class="peekrow" style="--col:'+CATS[id].col+'"><div><b>'+CATS[id].ico+' '+esc(cn(ct,id))+'</b>'+(isRes(id)?'<br><small>♻️ '+(kidMode?'しげん → ':'資源 → ')+esc(kidMode?RECY[id].tok:RECY[id].to)+'</small>':'')+'</div><span>'+(ex||"—")+'</span></div>'}).join("");
+  $("peekBody").innerHTML=ct.cats.map(function(id){var ex=its.filter(function(it){return itemCat(ct,it)===id}).slice(0,8).map(function(it){return it.e}).join(" ");return '<div class="peekrow" style="--col:'+CATS[id].col+'"><div><b>'+CATS[id].ico+' '+esc(cn(ct,id))+'</b>'+(isRes(id)?'<br><small>'+ic("recycle")+' '+(kidMode?'しげん → ':'資源 → ')+esc(kidMode?RECY[id].tok:RECY[id].to)+'</small>':'')+'</div><span>'+(ex||"—")+'</span></div>'}).join("");
   $("peekModal").hidden=false;$("peekClose").focus()}
 function closePeek(){modalOpen=false;$("peekModal").hidden=true}
 $("peekBtn").onclick=openPeek;$("peekClose").onclick=closePeek;$("peekModal").onclick=function(e){if(e.target===this)closePeek()};
